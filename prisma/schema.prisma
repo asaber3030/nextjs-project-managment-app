@@ -1,0 +1,118 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum TeamMemberStatus {
+  Active
+  Banned
+}
+
+enum Status {
+  Pending
+  Accepted
+  Refused
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  name      String
+  email     String   @unique
+  password  String
+  jobTitle  String
+  photo     String?  @default("/images/user-svg.svg") @db.LongText
+  createdAt DateTime @default(now()) @db.Timestamp()
+  updatedAt DateTime @default(now()) @db.Timestamp()
+
+  teams            Team[]
+  memberToTeams    TeamMember[]
+  invitations      TeamInvite[]
+  teamProjects     TeamProject[]
+  teamProjectTasks TeamProjectTasks[]
+}
+
+model Team {
+  id      Int     @id @default(autoincrement())
+  name    String
+  about   String?
+  ownerId Int
+  owner   User    @relation(fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  members     TeamMember[]
+  invitations TeamInvite[]
+
+  teamProjects TeamProject[]
+
+  createdAt DateTime @default(now()) @db.Timestamp()
+  updatedAt DateTime @default(now()) @db.Timestamp()
+}
+
+model TeamMember {
+  id     Int  @id @default(autoincrement())
+  teamId Int
+  team   Team @relation(fields: [teamId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  status TeamMemberStatus @default(Active)
+
+  joinedIn DateTime @default(now()) @db.Timestamp()
+}
+
+model TeamInvite {
+  id     Int  @id @default(autoincrement())
+  teamId Int
+  team   Team @relation(fields: [teamId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  joinedIn DateTime @default(now()) @db.Timestamp()
+
+  status Status @default(Pending)
+}
+
+model TeamProject {
+  id          Int     @id @default(autoincrement())
+  name        String
+  description String  @db.Text
+  github      String? @db.Text
+  url         String? @db.Text
+  notes       String?
+
+  teamId Int
+  team   Team @relation(fields: [teamId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  ownerId Int
+  owner   User @relation(fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  projectTasks TeamProjectTasks[]
+
+  createdAt DateTime @default(now()) @db.Timestamp()
+  updatedAt DateTime @default(now()) @db.Timestamp()
+}
+
+model TeamProjectTasks {
+  id          Int     @id @default(autoincrement())
+  title       String
+  description String  @db.Text
+  url         String? @db.Text
+  notes       String?
+  status      Status  @default(Pending)
+
+  projectId Int
+  userId    Int
+
+  project TeamProject @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user    User        @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  createdAt DateTime @default(now()) @db.Timestamp()
+  finishAt  DateTime @default(now()) @db.Timestamp()
+  updatedAt DateTime @default(now()) @db.Timestamp()
+}
