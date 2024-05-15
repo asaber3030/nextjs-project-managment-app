@@ -20,6 +20,8 @@ const config = {
     extend: {
       colors: {
         main: "#222831",
+        navbar: "#1d1f20",
+        darkNavbar: "#141414",
         lightMain: "#31363F",
         secondaryMain: "#76ABAE",
         grayMain: "#EEEEEE",

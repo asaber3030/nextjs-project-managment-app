@@ -1,11 +1,19 @@
-
 export const userSelect = {
   id: true,
   name: true,
   photo: true,
   username: true,
+  planId: true,
   email: true,
   jobTitle: true,
+  directCode: true,
+  phone: true,
+  private: true,
+  allowUsingDirectCode: true,
+  showDetails: true,
+  city: true,
+  displayName: true,
+  bgCover: true,
   createdAt: true,
   updatedAt: true,
 }

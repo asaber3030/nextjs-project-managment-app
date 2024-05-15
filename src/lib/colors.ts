@@ -1,0 +1,2 @@
+export const BoardBgColors = ['#C4A69D', '#98A886', '#465C69', '#363457', '#735290', '#293241', '#E0FBFC', '#98C1D9']
+export const BoardTextColors = ['#000000', '#000000', '#dddddd', '#dddddd', '#dddddd', '#dddddd', '#dddddd', '#dddddd']

@@ -13,6 +13,8 @@
 /.next/
 /out/
 
+/prisma
+
 # production
 /build
 

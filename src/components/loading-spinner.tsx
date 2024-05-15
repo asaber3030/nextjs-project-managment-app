@@ -7,7 +7,7 @@ type Props = {
 }
 export const LoadingSpinner = ({ label = 'Loading...', className }: Props) => {
   return ( 
-    <div className={cn('flex items-center gap-3 bg-gray-50 rounded-sm shadow-sm p-2 font-bold text-xs', className)}>
+    <div className={cn('flex items-center gap-3 bg-white rounded-sm shadow-sm p-2 font-bold text-xs', className)}>
       <Loader className='size-4 animate-spin' />
       <span>{label}</span>
     </div>

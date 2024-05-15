@@ -7,6 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// Enums
 enum TeamMemberStatus {
   Active
   Banned
@@ -18,51 +19,148 @@ enum Status {
   Refused
 }
 
-model User {
-  id        Int      @id @default(autoincrement())
-  username  String   @unique
-  name      String
-  email     String   @unique
-  password  String
-  jobTitle  String
-  photo     String?  @default("/images/user-svg.svg") @db.LongText
-  createdAt DateTime @default(now()) @db.Timestamp()
-  updatedAt DateTime @default(now()) @db.Timestamp()
+enum PersonalTaskStatus {
+  Pending
+  Done
+  Todo
+}
 
-  teams            Team[]
-  memberToTeams    TeamMember[]
-  invitations      TeamInvite[]
-  teamProjects     TeamProject[]
-  teamProjectTasks TeamProjectTasks[]
+enum TeamRoles {
+  Owner
+  Member
+  Editor
+  Admin
+}
+
+// Models
+
+model User {
+  id          Int     @id @default(autoincrement())
+  username    String  @unique
+  displayName String?
+  name        String
+  email       String  @unique
+  password    String
+  jobTitle    String
+  photo       String  @default("/images/user-svg.svg") @db.LongText
+  phone       Int?    @db.Int
+  city        String?
+  directCode  String  @unique
+  bgCover     String? @db.LongText
+  planId      Int     @default(1)
+
+  allowUsingDirectCode Boolean @default(true)
+  private              Boolean @default(false)
+  showDetails          Boolean @default(true)
+
+  createdAt DateTime @default(now()) @db.Timestamp()
+  updatedAt DateTime @updatedAt
+
+  plan              Plan                @relation(fields: [planId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  teams             Team[]
+  memberToTeams     TeamMember[]
+  invitations       TeamInvite[]
+  teamProjects      TeamProject[]
+  teamProjectTasks  TeamProjectTasks[]
+  teamProjectBoards TeamProjectBoards[]
+  notifications     Notification[]
+  projects          Project[]
+  tasks             Task[]
+  projectFiles      ProjectFile[]
+  taskReplies       TeamTaskReply[]
+}
+
+model Notification {
+  id     Int      @id @default(autoincrement())
+  title  String
+  url    String
+  icon   String   @default("notifications/default.svg")
+  sentIn DateTime @default(now()) @db.Timestamp
+  isRead Boolean? @default(false)
+  userId Int
+  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+model Plan {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  price    Float @default(200)
+  oldPrice Float @default(400)
+
+  numberOfTeams            Int     @default(1)
+  numberOfProjectTeams     Int     @default(1)
+  numberOfPersonalProjects Int     @default(1)
+  numberOfPersonalTasks    Int     @default(1)
+  numberOfPersonalBoards   Int     @default(1)
+  numberOfTeamMembers      Int     @default(1)
+  numberOfBoards           Int     @default(1)
+  numberOfTasks            Int     @default(1)
+  hasMailSystem            Boolean @default(false)
+  hasCharts                Boolean @default(false)
+  hasAnalytics             Boolean @default(false)
+  canDirectAdd             Boolean @default(false)
+
+  createdAt DateTime @default(now()) @db.Timestamp()
+  updatedAt DateTime @updatedAt
+
+  users    User[]
+  features PlanFeature[]
+}
+
+model PlanFeature {
+  id        Int     @id @default(autoincrement())
+  title     String
+  available Boolean @default(false)
+
+  planId Int
+  plan   Plan @relation(fields: [planId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model Team {
-  id      Int     @id @default(autoincrement())
-  name    String
-  about   String?
+  id    Int     @id @default(autoincrement())
+  name  String
+  about String?
+
   ownerId Int
-  owner   User    @relation(fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  owner   User @relation(fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  members     TeamMember[]
-  invitations TeamInvite[]
-
+  members      TeamMember[]
+  invitations  TeamInvite[]
   teamProjects TeamProject[]
 
+  permissions TeamPermission[]
+
   createdAt DateTime @default(now()) @db.Timestamp()
-  updatedAt DateTime @default(now()) @db.Timestamp()
+  updatedAt DateTime @updatedAt
+}
+
+model Permission {
+  id              Int              @id @default(autoincrement())
+  name            String           @unique
+  tag             String           @default("tasks")
+  displayName     String           @default("Display Name")
+  teamPermissions TeamPermission[]
+}
+
+model TeamPermission {
+  id           Int        @id @default(autoincrement())
+  whoCanDo     TeamRoles  @default(Member)
+  teamId       Int
+  permissionId Int
+  permission   Permission @relation(fields: [permissionId], references: [id])
+  team         Team       @relation(fields: [teamId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model TeamMember {
-  id     Int  @id @default(autoincrement())
-  teamId Int
-  team   Team @relation(fields: [teamId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  userId Int
-  user   User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  status TeamMemberStatus @default(Active)
-
-  joinedIn DateTime @default(now()) @db.Timestamp()
+  id       Int              @id @default(autoincrement())
+  teamId   Int
+  team     Team             @relation(fields: [teamId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  role     TeamRoles        @default(Member)
+  status   TeamMemberStatus @default(Active)
+  userId   Int
+  user     User             @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  joinedIn DateTime         @default(now()) @db.Timestamp()
 }
 
 model TeamInvite {
@@ -70,10 +168,12 @@ model TeamInvite {
   teamId Int
   team   Team @relation(fields: [teamId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
+  invitationRole TeamRoles @default(Member)
+
   userId Int
   user   User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  joinedIn DateTime @default(now()) @db.Timestamp()
+  sentIn DateTime @default(now()) @db.Timestamp()
 
   status Status @default(Pending)
 }
@@ -92,10 +192,11 @@ model TeamProject {
   ownerId Int
   owner   User @relation(fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  projectTasks TeamProjectTasks[]
+  projectTasks  TeamProjectTasks[]
+  projectBoards TeamProjectBoards[]
 
   createdAt DateTime @default(now()) @db.Timestamp()
-  updatedAt DateTime @default(now()) @db.Timestamp()
+  updatedAt DateTime @updatedAt
 }
 
 model TeamProjectTasks {
@@ -109,10 +210,96 @@ model TeamProjectTasks {
   projectId Int
   userId    Int
 
-  project TeamProject @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  user    User        @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  project TeamProject     @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user    User            @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  replies TeamTaskReply[]
 
   createdAt DateTime @default(now()) @db.Timestamp()
-  finishAt  DateTime @default(now()) @db.Timestamp()
-  updatedAt DateTime @default(now()) @db.Timestamp()
+  finishAt  DateTime @default(now()) @db.Date
+  updatedAt DateTime @updatedAt
+}
+
+model TeamTaskReply {
+  id          Int     @id @default(autoincrement())
+  title       String
+  description String  @db.Text
+  url         String? @db.Text
+
+  taskId Int
+  userId Int
+
+  task TeamProjectTasks @relation(fields: [taskId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user User             @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  createdAt DateTime @default(now()) @db.Timestamp()
+  updatedAt DateTime @updatedAt
+}
+
+model TeamProjectBoards {
+  id              Int    @id @default(autoincrement())
+  title           String
+  description     String @db.Text
+  backgroundColor String
+  textColor       String
+
+  projectId Int
+  ownerId   Int
+
+  owner   User        @relation(fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  project TeamProject @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  createdAt DateTime @default(now()) @db.Timestamp()
+  updatedAt DateTime @updatedAt
+}
+
+// Personal
+
+model Project {
+  id          Int     @id @default(autoincrement())
+  name        String
+  description String  @db.Text
+  github      String? @db.Text
+  url         String? @db.Text
+  notes       String?
+
+  ownerId Int
+  owner   User @relation(fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  createdAt DateTime @default(now()) @db.Timestamp()
+  updatedAt DateTime @updatedAt
+
+  files ProjectFile[]
+}
+
+model ProjectFile {
+  id          Int    @id @default(autoincrement())
+  name        String
+  description String @db.Text
+  url         String @db.Text
+  extension   String
+
+  ownerId Int
+  owner   User @relation(fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  projectId Int
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  createdAt DateTime @default(now()) @db.Timestamp()
+  updatedAt DateTime @updatedAt
+}
+
+model Task {
+  id          Int                @id @default(autoincrement())
+  title       String
+  description String             @db.LongText
+  url         String?            @db.Text
+  notes       String?
+  status      PersonalTaskStatus @default(Pending)
+
+  ownerId Int
+  owner   User @relation(fields: [ownerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  finishAt  DateTime @default(now()) @db.Date
+  createdAt DateTime @default(now()) @db.Timestamp()
+  updatedAt DateTime @updatedAt
 }

@@ -1,38 +1,38 @@
 "use client";
 
+import React from 'react'
+import Link from "next/link";
+
 import { useForm } from "react-hook-form";
 import { useSession } from "next-auth/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import React, { useEffect, useState, ChangeEvent, useDeferredValue } from "react";
+import { useEffect, useState, ChangeEvent, useDeferredValue } from "react";
+import { useGP } from '@/hooks/usePermissions';
 
+import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { findUsersByArray, searchUsers } from "@/actions/user-data";
-import { CreateTeamSchema } from "@/schema";
+import { searchUsers } from "@/actions/user-data";
+import { createTeam } from "@/actions/team";
+import { cn } from '@/lib/utils';
 
+import { CreateTeamSchema } from "@/schema";
+import { QueryKeys } from '@/lib/query-keys';
+import { User } from "@/types";
+
+import { Plus, UserPlus, X } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@/components/ui/command"
-import { UserAvatar } from "../../user/avatar";
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
+import { LoadingSpinner } from "@/components/loading-spinner";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { Loader, Plus, Search, UserPlus, X } from "lucide-react"
-import { Separator } from "@/components/ui/separator"
 import { UserHoverCard } from "../../user/hover-card";
+import { UpgradePlanAlert } from '@/components/upgrade-plan-alert';
 
-import { User } from "@/types/user";
-import { LoadingSpinner } from "@/components/loading-spinner";
-import Link from "next/link";
-import { createTeam } from "@/actions/team";
-import { toast } from "sonner";
+type Props = { label: string, className?: string }
 
-type Props = {
-  children: React.ReactNode
-}
-
-export const CreateTeamButton = ({ children }: Props) => {
+export const CreateTeamButton = ({ label, className }: Props) => {
 
   const { data } = useSession()
   const { invalidateQueries } = useQueryClient()
@@ -41,6 +41,7 @@ export const CreateTeamButton = ({ children }: Props) => {
   const [finalInvitations, setFinalInvitations] = useState<User[]>([])
   const [modal, setModal] = useState(false)
 
+  const permission = useGP()
   const deferredEmail = useDeferredValue(userEmail)
 
   const searchUsersQuery = useQuery({
@@ -70,10 +71,8 @@ export const CreateTeamButton = ({ children }: Props) => {
   const createMutation = useMutation({
     mutationFn: () => createTeam(data?.user.id as any, finalInvitations, form.getValues()),
     onSuccess: (data) => {
-      invalidateQueries({ queryKey: ['user', 'teams'] })
-      if (data.status === 200) {
-        toast.success(data.message)
-      }
+      toast.message(data.message)
+      invalidateQueries({ queryKey: QueryKeys.userTeams() })
     }
   })
 
@@ -86,14 +85,14 @@ export const CreateTeamButton = ({ children }: Props) => {
 
   useEffect(() => {
     searchUsersQuery.refetch()
-  }, [deferredEmail])
+  }, [deferredEmail, searchUsersQuery])
 
   return ( 
     <Dialog open={modal} onOpenChange={setModal}>
 
-      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogTrigger className={cn('bg-secondaryMain text-sm transition-all hover:bg-secondaryMain/80 flex items-center gap-2 font-medium rounded-md px-4 h-9', className)}><Plus className='size-4' /> {label}</DialogTrigger>
 
-      <DialogContent className="sm:max-w-[425px] xl:min-w-[650px]">
+      <DialogContent className="min-w-[50%]">
 
         <DialogHeader>
           <DialogTitle>Create new team</DialogTitle>
@@ -141,10 +140,15 @@ export const CreateTeamButton = ({ children }: Props) => {
                       </FormItem>
                     )}
                   />
-                  <DialogFooter>
-                    <DialogClose><Button size='sm' type="button" variant='outline'>Cancel</Button></DialogClose>
-                    <Button size='sm' type="submit" variant='secondaryMain'><Plus className='size-4' /> Create Team</Button>
-                  </DialogFooter>
+                  {permission.canCreateMoreTeams ? (
+                    <DialogFooter>
+                      <DialogClose><Button size='sm' type="button" variant='outline'>Cancel</Button></DialogClose>
+                      <Button size='sm' type="submit" variant='secondaryMain'><Plus className='size-4' /> Create Team</Button>
+                    </DialogFooter>
+                  ): (
+                    <UpgradePlanAlert />
+                  )}
+                  
                 </form>
               </Form>
 
@@ -170,7 +174,7 @@ export const CreateTeamButton = ({ children }: Props) => {
                   {searchUsersQuery.data && searchUsersQuery.data.length > 0 && (
                     <section className='space-y-2 mt-4'>
                       {searchUsersQuery.data.map((user) => (
-                        <div className='flex justify-between items-center'>
+                        <div className='flex justify-between items-center' key={`search-user-idx-${user?.id}`}>
                           <div className="flex gap-2 items-center">
                             <UserHoverCard date={user.createdAt} user={user as User} />
                             <div>
@@ -203,7 +207,7 @@ export const CreateTeamButton = ({ children }: Props) => {
               ): (
                 <section className='space-y-2 mt-4'>
                   {finalInvitations.map((user) => (
-                    <div className='flex justify-between items-center'>
+                    <div className='flex justify-between items-center' key={`final-inv-idx-${user.id}`}>
                       <div className="flex gap-2 items-center">
                         <UserHoverCard date={user.createdAt} user={user as User} />
                         <div>
@@ -228,7 +232,6 @@ export const CreateTeamButton = ({ children }: Props) => {
             </TabsContent>
 
           </Tabs>
-
 
         </div>
 

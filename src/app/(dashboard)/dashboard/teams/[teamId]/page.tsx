@@ -1,8 +1,10 @@
+import { getTeamAnalytics } from "@/actions/team";
 import { getTeam } from "@/actions/user-data";
-import { TeamHeaderSection } from "@/app/_components/app/team-section-header";
-import { DisplayTeamInfo } from "@/app/_components/app/teams/display-team-info";
-import { Team } from "@/types/user";
-import { Users } from "lucide-react";
+import { notFound } from "next/navigation";
+
+import { DisplayTeamInfo } from "@/app/_components/app/teams/team-view";
+import { Team } from "@/types";
+import { isMemberOfTeam } from "@/actions/check";
 
 type Props = {
   params: { teamId: string }
@@ -10,13 +12,17 @@ type Props = {
 
 const SingleTeamPage = async ({ params }: Props) => {
   
-  const team = await getTeam(parseInt(params.teamId)) as Team
+  const team = await getTeam(+params.teamId) as Team
+  const analytics = await getTeamAnalytics(+params.teamId)
+  const isMember = await isMemberOfTeam(+params.teamId)
+
+  if (!team || !isMember) return notFound();
 
   return (
-    <div>
-      <TeamHeaderSection label={`${team.name}'s Dashboard`} icon={Users} />
-      <DisplayTeamInfo team={team} />
-    </div>
+    <DisplayTeamInfo 
+      analytics={analytics} 
+      team={team} 
+    />
   );
 }
  

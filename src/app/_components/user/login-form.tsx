@@ -1,9 +1,6 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { useMutation } from "@tanstack/react-query";
-
-import { z } from "zod";
 import { zodResolver } from '@hookform/resolvers/zod'
 
 import { LoginSchema } from "@/schema/user";
@@ -12,8 +9,13 @@ import { Input } from "@/components/ui/input"
 import { LoadingButton } from "@/components/loading-button";
 
 import { signIn } from 'next-auth/react'
+import { useState } from "react";
+import { LogIn } from "lucide-react";
 
 export const LoginForm = () => {
+
+  const [loading, setLoading] = useState(false)
+
   const form = useForm({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
@@ -23,11 +25,13 @@ export const LoginForm = () => {
   })
 
   const handleRegister = async () => {
+    setLoading(true)
     const data = await signIn('credentials', {
       email: form.getValues('email'),
       password: form.getValues('password')
+    }).finally(() => {
+      setLoading(false)
     })
-    console.log(data)
   }
 
   return ( 
@@ -62,9 +66,7 @@ export const LoginForm = () => {
             )}
           />
 
-          <LoadingButton>
-            Sign in
-          </LoadingButton>
+          <LoadingButton loading={loading} variant='secondaryMain' size='sm'><LogIn className='size-4' /> Sign In</LoadingButton>
         </form>
       </Form>
     </div>

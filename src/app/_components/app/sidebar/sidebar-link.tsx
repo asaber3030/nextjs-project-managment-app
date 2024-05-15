@@ -21,9 +21,9 @@ export const SidebarLink = ({ children, label, icon: Icon, url }: Props) => {
   if (children) {
     return (
       <div className="flex items-center justify-between">
-        <Link href={url} className='font-bold text-sm text-gray-600 items-center flex gap-4 p-2 mx-2 duration-300 rounded-md hover:bg-[#e9e9e9] transition-all w-full'><Icon /> {label}</Link>
+        <Link href={url} className='font-medium text-sm text-gray-200 items-center flex gap-4 p-2 mx-2 duration-300 rounded-md hover:bg-darkNavbar transition-all w-full'><Icon className='size-5' /> {label}</Link>
         <DropdownMenu open={open} onOpenChange={setOpen}>
-          <DropdownMenuTrigger className={cn('p-1 rounded-md hover:bg-[#e9e9e9]', open && 'bg-[#e9e9e9]')}>
+          <DropdownMenuTrigger className={cn('p-1 rounded-md hover:bg-darkNavbar', open && 'bg-darkNavbar')}>
             <ChevronRight className={cn(`size-4 text-gray-600 transition-all`, open ? 'rotate-90' : 'rotate-0')} />
           </DropdownMenuTrigger>
           <DropdownMenuContent className='w-[200px] top-1/2 right-0'>
@@ -34,9 +34,6 @@ export const SidebarLink = ({ children, label, icon: Icon, url }: Props) => {
     )
   }
   return ( 
-    <Link href={url} className='font-bold text-sm text-gray-600 items-center flex justify-between p-2 m-2 rounded-md hover:bg-[#e9e9e9]'>
-      <Icon />
-      {label}
-    </Link>
+    <Link href={url} className='font-medium text-sm text-gray-200 items-center flex gap-4 p-2 mx-2 duration-300 rounded-md hover:bg-darkNavbar transition-all'><Icon className='size-5' /> {label}</Link>
   );
 }

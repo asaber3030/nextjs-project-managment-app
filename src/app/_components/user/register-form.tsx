@@ -1,20 +1,21 @@
 "use client";
 
-import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
 
 import { z } from "zod";
 import { zodResolver } from '@hookform/resolvers/zod'
 
 import { RegisterSchema } from "@/schema/user";
+import { LoadingButton } from "@/components/loading-button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { LoadingButton } from "@/components/loading-button";
-import { registerAction } from "@/actions/user";
 
+import { registerAction } from "@/actions/auth";
 import { toast } from 'sonner'
 import { APIResponse } from "@/types";
-import { useRouter } from "next/navigation";
+import { UserPlus } from "lucide-react";
 
 export const RegisterForm = () => {
 
@@ -92,6 +93,7 @@ export const RegisterForm = () => {
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
             name="password"
@@ -105,6 +107,7 @@ export const RegisterForm = () => {
               </FormItem>
             )}
           />
+
           <FormField
             control={form.control}
             name="jobTitle"
@@ -118,9 +121,9 @@ export const RegisterForm = () => {
               </FormItem>
             )}
           />
-          <LoadingButton loading={registerMutation.isPending}>
-            Register
-          </LoadingButton>
+          
+          <LoadingButton loading={registerMutation.isPending} variant='secondaryMain' size='sm'><UserPlus className='size-4' /> Create Account</LoadingButton>
+
         </form>
       </Form>
     </div>

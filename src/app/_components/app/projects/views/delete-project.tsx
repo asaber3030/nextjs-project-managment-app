@@ -3,44 +3,26 @@
 import Link from "next/link";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useForm } from "react-hook-form";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-
-import { FolderPlus, Plus, Trash } from "lucide-react";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { LoadingButton } from "@/components/loading-button";
-import { TeamHeaderSection } from "../../team-section-header";
-
-import { Team } from "@/types/user";
-import { TeamProject } from "@prisma/client";
-import { CreateProjectSchema } from "@/schema";
-import { createTeamProject, updateTeamProject } from "@/actions/team";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "sonner";
-import { QueryKeys } from "@/lib/query-keys";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import {
-  Alert,
-  AlertDescription,
-  AlertTitle,
-} from "@/components/ui/alert"
-import { Button } from "@/components/ui/button";
+import { FormEvent, useRef } from "react";
 import { route } from "@/lib/route";
-import { Label } from "@/components/ui/label";
-import { useRef, useState } from "react";
 
-type Props = {project: TeamProject }
+import { Plus, Trash } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { TeamHeaderSection } from "../../teams/team-section-header";
+import { toast } from "sonner";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+
+import { QueryKeys } from "@/lib/query-keys";
+import { deleteTeamProject } from "@/actions/team";
+import { TeamProject } from "@/types";
+import { LoadingButton } from "@/components/loading-button";
+
+type Props = { project: TeamProject }
 
 export const DeleteProjectView = ({ project }: Props) => {
 
@@ -50,16 +32,19 @@ export const DeleteProjectView = ({ project }: Props) => {
 
   const projectNameRef = useRef<HTMLInputElement>(null)
 
-  const updateMutation = useMutation({
-    mutationFn: async () => {},
+  const deleteMutation = useMutation({
+    mutationFn: async () => deleteTeamProject(project.id, data?.user.id as number),
     onSuccess: (data) => {
-      
+      toast.message(data.message)
+      invalidateQueries({ queryKey: QueryKeys.userTeams() })
     }
   })
 
-  const handleDelete = () => {
+  const handleDelete = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
     if (projectNameRef.current?.value === project.name) {
-      updateMutation.mutate()
+      deleteMutation.mutate()
+      push(route.viewTeam(project.teamId))
       return;
     }
     toast.message("Invalid project name!")
@@ -77,7 +62,7 @@ export const DeleteProjectView = ({ project }: Props) => {
           <AlertTitle className='text-red-500 font-semibold'>Deleting Project</AlertTitle>
           <AlertDescription>
             <ul className='mt-3 space-y-1 list-disc ml-5 text-gray-500'>
-              <li>Once you delete this project you won't be able to restore it again.</li>
+              <li>Once you delete this project you won&apos;t be able to restore it again.</li>
               <li>Deleting the project will cause to delete everthing related to this project</li>
               <li>Deleting a project will erase its data such as tasks, boards, and calendars.</li>
             </ul>
@@ -94,11 +79,14 @@ export const DeleteProjectView = ({ project }: Props) => {
                         and remove your data from our servers.
                       </DialogDescription>
                     </DialogHeader>
-                    <Label>Please type <b>"{project.name}"</b></Label>
-                    <Input ref={projectNameRef} placeholder={`Type "${project.name}" to delete the project!`} />
-                    <DialogFooter>
-                      <Button size='sm' variant='destructive' onClick={handleDelete}>Confirm</Button>
-                    </DialogFooter>
+
+                    <form onSubmit={handleDelete}>
+                      <Label>Please type <b>&quot;{project.name}&quot;</b></Label>
+                      <Input ref={projectNameRef} placeholder={`Type "${project.name}" to delete the project!`} />
+                      <DialogFooter>
+                        <LoadingButton loading={deleteMutation.isPending} className='mt-4' size='sm' variant='destructive' type='submit'>Confirm</LoadingButton>
+                      </DialogFooter>
+                    </form>
                   </DialogContent>
                 </Dialog>
               </div>

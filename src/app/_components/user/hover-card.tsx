@@ -1,23 +1,28 @@
-import Link from "next/link";
+import Link from "next/link"
 
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { CalendarIcon } from "lucide-react"
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card"
-import { UserAvatar } from "./avatar";
+import { UserAvatar } from "./avatar"
 
-import { User } from "@/types/user";
+import { User } from "@/types"
 
-import { diffForHuman } from "@/lib/date";
+import { diffForHuman } from "@/lib/date"
+import { route } from "@/lib/route"
 
 type Props = {
-  user: User,
-  date: Date,
+  user: User
+  date: Date
+  userURL?: string
   label?: string
 }
 
-export const UserHoverCard = ({ label = 'Joined ', date, user }: Props) => {
+export const UserHoverCard = ({ label = 'Joined ', userURL, date, user }: Props) => {
+
+  const mainURL = userURL ? userURL : route.userProfile(user.username)
+
   return ( 
-    <HoverCard>
+    <HoverCard openDelay={100}>
         
       <HoverCardTrigger asChild>
         <Avatar>
@@ -33,18 +38,21 @@ export const UserHoverCard = ({ label = 'Joined ', date, user }: Props) => {
           <UserAvatar className='size-14' photo={user.photo} />
 
           <div className="space-y-1 w-full">
-            <h4 className="text-lg font-semibold p-0 m-0">{user.name} <Link href='' className='text-xs font-normal hover:underline lowercase'>@{user.name}</Link></h4>
+          
+            <Link href={mainURL} className="text-lg font-medium hover:underline">{user.name}</Link>
             <p className='text-sm p-0 m-0'>{user.jobTitle}</p>
             
             <div className="flex items-center pt-2">
-              <CalendarIcon className="mr-2 h-4 w-4 opacity-70" />{" "}
+              <CalendarIcon className="mr-2 h-4 w-4 opacity-70" />
               <span className="text-xs text-muted-foreground">{label} {diffForHuman(date)}</span>
             </div>
+
           </div>
+
         </div>
 
       </HoverCardContent>
 
     </HoverCard>
-  );
+  )
 }

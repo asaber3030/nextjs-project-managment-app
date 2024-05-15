@@ -1,13 +1,23 @@
 import { cn } from "@/lib/utils";
+import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
+import { PackageOpen } from "lucide-react";
 
 type Props = {
   label?: string,
-  className?: string
+  className?: string,
+  title?: string,
+  children?: React.ReactNode
 }
-export const EmptyData = ({ className, label = 'No Data Found' }: Props) => {
+export const EmptyData = ({ children, className, title = 'No Data Found', label = 'No Data Found' }: Props) => {
   return ( 
-    <div className={cn('rounded-md bg-border shadow-sm p-2 px-4 text-gray-700 text-sm', className)}>
-      {label}
-    </div>
+    <Alert className={cn(className, 'bg-secondary shadow-sm items-center')}>
+      <PackageOpen className="size-6" />
+      <AlertTitle className='ml-4 font-medium'>{title}</AlertTitle>
+      {children && (
+        <section className='mt-2 ml-4'>
+          {children}
+        </section>
+      )}
+    </Alert>
   );
 }

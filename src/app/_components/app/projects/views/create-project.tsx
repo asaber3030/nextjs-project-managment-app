@@ -1,25 +1,31 @@
 "use client";
 
-import Link from "next/link";
+import React from "react";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useTP } from "@/hooks/usePermissions";
+import { useRole } from "@/hooks/useRoles";
+import { useUser } from "@/hooks";
 
 import { FolderPlus, Plus } from "lucide-react";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { LoadingButton } from "@/components/loading-button";
-import { TeamHeaderSection } from "../../team-section-header";
+import { TeamHeaderSection } from "../../teams/team-section-header";
+import { UpgradePlanAlert } from "@/components/upgrade-plan-alert";
+import { NoPermissionAlert } from "@/components/no-permissions-alert";
 
-import { Team } from "@/types/user";
+import { Team } from "@/types";
+import { QueryKeys } from "@/lib/query-keys";
 import { CreateProjectSchema } from "@/schema";
+
 import { createTeamProject } from "@/actions/team";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { QueryKeys } from "@/lib/query-keys";
 
 type Props = { team: Team }
 
@@ -28,6 +34,11 @@ export const CreateProjectView = ({ team }: Props) => {
   const { data } = useSession();
   const { push } = useRouter()
   const { invalidateQueries } = useQueryClient()
+
+  const permission = useTP()
+
+  const user = useUser()
+  const roleCreateProject = useRole('projects', 'add-projects', team.id)
 
   const form = useForm({
     resolver: zodResolver(CreateProjectSchema),
@@ -58,9 +69,7 @@ export const CreateProjectView = ({ team }: Props) => {
 
   return ( 
     <div>
-      <TeamHeaderSection icon={Plus} label="Create New project">
-        <Link href={`/dashboard/teams/${team.id}`} className='text-secondaryMain hover:underline'>{team.name}</Link>
-      </TeamHeaderSection>
+      <TeamHeaderSection icon={Plus} label="Create New project" />
 
       <section>
 
@@ -92,7 +101,7 @@ export const CreateProjectView = ({ team }: Props) => {
                 </FormItem>
               )}
             />
-            <div className='xl:grid xl:grid-cols-2 gap-2 my-4'>
+            <div className='grid grid-cols-1 xl:grid-cols-2 gap-4 my-4'>
               <FormField
                 control={form.control}
                 name="github"
@@ -121,7 +130,7 @@ export const CreateProjectView = ({ team }: Props) => {
               />
             </div>
 
-            <div className='xl:grid xl:grid-cols-2 gap-2 my-4'>
+            <div className='grid grid-cols-1 xl:grid-cols-2 gap-4 my-4'>
               <FormField
                 control={form.control}
                 name="description"
@@ -150,11 +159,20 @@ export const CreateProjectView = ({ team }: Props) => {
               />
             </div>
 
-            <LoadingButton variant='outlineMain' className='hover:text-white' size='sm' loading={createMutation.isPending}>
-              <FolderPlus className='size-4' />
-              Create project
-            </LoadingButton>
-
+            {(roleCreateProject.access || user?.id === team.ownerId) ? (
+              <React.Fragment>
+                {permission.canCreateMoreTeamProjects ? (
+                  <LoadingButton variant='outlineMain' className='hover:text-white' size='sm' loading={createMutation.isPending}>
+                    <FolderPlus className='size-4' />
+                    Create project
+                  </LoadingButton>
+                ): (
+                  <UpgradePlanAlert label="You have reached the limits of project in current team. Upgrade your plan for more projects." />
+                )}
+              </React.Fragment>
+            ): (
+              <NoPermissionAlert actionName='Create project' />
+            )}
           </form>
 
         </Form>

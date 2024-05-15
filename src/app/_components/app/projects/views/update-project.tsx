@@ -1,7 +1,5 @@
 "use client";
 
-import Link from "next/link";
-
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { useSession } from "next-auth/react";
@@ -12,17 +10,16 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { LoadingButton } from "@/components/loading-button";
-import { TeamHeaderSection } from "../../team-section-header";
+import { TeamHeaderSection } from "../../teams/team-section-header";
 
-import { Team } from "@/types/user";
-import { TeamProject } from "@prisma/client";
 import { CreateProjectSchema } from "@/schema";
-import { createTeamProject, updateTeamProject } from "@/actions/team";
+import { updateTeamProject } from "@/actions/team";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { QueryKeys } from "@/lib/query-keys";
+import { TeamProject } from "@/types";
 
-type Props = {project: TeamProject }
+type Props = { project: TeamProject }
 
 export const UpdateProjectView = ({ project }: Props) => {
 
