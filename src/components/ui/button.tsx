@@ -10,6 +10,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         main: "bg-main hover:bg-lightMain text-primary-foreground",
+        success: "bg-green-700 hover:bg-green-700/90 text-primary-foreground",
         outlineMain: "border border-main bg-transparent text-black hover:bg-main/90 hover:text-accent-foreground",
         secondaryMain: "bg-secondaryMain hover:bg-secondaryMain/90 text-black",
         default: "bg-primary text-primary-foreground hover:bg-primary/90",
@@ -18,7 +19,7 @@ const buttonVariants = cva(
         outline:
           "border border-input bg-background text-black hover:bg-accent hover:text-accent-foreground",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+          "bg-secondary text-secondary-foreground hover:bg-border shadow-sm border",
         ghost: "hover:bg-accent hover:bg-transparent",
         link: "text-primary underline-offset-4 hover:underline",
         navbar: 'hover:bg-accent hover:bg-lightMain text-grayMain'

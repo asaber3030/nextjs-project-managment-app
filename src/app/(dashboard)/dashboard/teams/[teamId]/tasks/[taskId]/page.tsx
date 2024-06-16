@@ -50,23 +50,21 @@ const TaskID = async ({ params }: Props) => {
     include: { user: { select: userSelect } },
     orderBy: { id: 'desc' }
   })
-
-  if (!isMember) return notFound();
-
+  
   if (!task || !team || !task.project) return notFound()
+  if ((!isMember && current?.user?.id != team?.ownerId)) return notFound();
   if (team.id !== task.project.teamId) return notFound()
-  if (team.ownerId !== current?.user.id) return notFound()
   
   return (
     <div>
-      <Title label={<p>Task - <b className='font-bold'>{task?.title}</b></p>} hasBottomBorder parentClassName="mb-4">
+      <Title label={<p>Task - <b className='font-semibold'>{task?.title}</b></p>} hasBottomBorder parentClassName="mb-4">
         <Badge variant={badgeVariant(task.status)}>{task?.status}</Badge>
       </Title>
       
       <div className="grid xl:grid-cols-8 grid-cols-1 gap-3">
         <div className="col-span-5 divide-y">
           <section className='pt-0 py-4'>
-            <h2 className="text-lg font-semibold text-gray-800 mb-2">Assigned To</h2>
+            <h2 className="text-lg font-medium text-gray-800 mb-2">Assigned To</h2>
             <div className='flex items-center gap-4'>
               <UserHoverCard user={task.user as User} date={task.createdAt} label="Task sent in" userURL={route.viewTeamMember(teamId, task.user.id)} />
               <div>
@@ -77,7 +75,7 @@ const TaskID = async ({ params }: Props) => {
           </section>
 
           <section className='py-4'>
-            <h2 className="text-lg font-semibold text-gray-800 mb-2">Available Actions</h2>
+            <h2 className="text-lg font-medium text-gray-800 mb-2">Available Actions</h2>
             <div className='flex flex-wrap gap-1'>
               <AssignTaskAction task={task} label="Reassign Task" className='w-fit flex gap-4 h-9 bg-white border transition-all hover:bg-border px-4 text-sm font-medium rounded-md items-center' />
               <UpdateTaskAction task={task} label="Update Task" className='w-fit flex gap-4 h-9 bg-white border transition-all hover:bg-border px-4 text-sm font-medium rounded-md items-center' />
@@ -86,7 +84,7 @@ const TaskID = async ({ params }: Props) => {
           </section>
 
           <section className='py-4'>
-            <h2 className="text-lg font-semibold text-gray-800 mb-2">Replies</h2>
+            <h2 className="text-lg font-medium text-gray-800 mb-2">Replies</h2>
             
             {replies.length === 0 && (
               <EmptyData title="No Replies for this task." />
@@ -106,7 +104,7 @@ const TaskID = async ({ params }: Props) => {
 
         <div className="col-span-3">
 
-          <h2 className="text-lg font-semibold text-gray-800 mb-2">Task Card</h2>
+          <h2 className="text-lg font-medium text-gray-800 mb-2">Task Card</h2>
 
           <OneTask
             teamId={teamId}

@@ -1,8 +1,12 @@
-import { Skeleton } from "@/components/ui/skeleton";
+import { TaskSkeleton } from "@/app/_components/skeleton/task-skeleton";
+import { Title } from "@/components/title";
 
 const LoadingTasks = () => {
   return (
-    <Skeleton className='w-full h-10' />
+    <div className='xl:container'>
+      <Title label="My Tasks" parentClassName="mb-4" hasBottomBorder  />
+      <TaskSkeleton repeat={4} />
+    </div>
   );
 }
  

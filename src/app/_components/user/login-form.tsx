@@ -1,26 +1,29 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-import { zodResolver } from '@hookform/resolvers/zod'
+import Link from "next/link";
+import Image from "next/image";
 
+import { useForm } from "react-hook-form";
+import { useState } from "react";
+import { signIn, useSession } from 'next-auth/react'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { LoginSchema } from "@/schema/user";
+
+import { LogIn } from "lucide-react";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { LoadingButton } from "@/components/loading-button";
-
-import { signIn } from 'next-auth/react'
-import { useState } from "react";
-import { LogIn } from "lucide-react";
 
 export const LoginForm = () => {
 
   const [loading, setLoading] = useState(false)
 
+
   const form = useForm({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
-      'email': 'a@a.com',
-      'password': '0552320541',
+      'email': '',
+      'password': ''
     }
   })
 
@@ -65,7 +68,10 @@ export const LoginForm = () => {
               </FormItem>
             )}
           />
-
+          <div className='flex justify-between'>
+            <Link href='/register' className='text-sm text-blue-800 hover:underline'>Don&apos;t have an account?</Link>
+            <Link href='/register' className='text-sm text-blue-800 hover:underline'>Forgot password?</Link>
+          </div>
           <LoadingButton loading={loading} variant='secondaryMain' size='sm'><LogIn className='size-4' /> Sign In</LoadingButton>
         </form>
       </Form>

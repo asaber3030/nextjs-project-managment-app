@@ -1,7 +1,6 @@
 "use client";
 
 import React from 'react'
-import Link from "next/link";
 
 import { useForm } from "react-hook-form";
 import { useSession } from "next-auth/react";
@@ -15,24 +14,29 @@ import { searchUsers } from "@/actions/user-data";
 import { createTeam } from "@/actions/team";
 import { cn } from '@/lib/utils';
 
+import { User } from "@/types";
 import { CreateTeamSchema } from "@/schema";
 import { QueryKeys } from '@/lib/query-keys';
-import { User } from "@/types";
+import { ClassValue } from 'clsx';
 
-import { Plus, UserPlus, X } from "lucide-react"
+import { Check, Plus, UserPlus } from "lucide-react"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { UpgradePlanAlert } from '@/components/upgrade-plan-alert';
+import { LoadingSpinner } from "@/components/loading-spinner";
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
-import { LoadingSpinner } from "@/components/loading-spinner";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
-import { UserHoverCard } from "../../user/hover-card";
-import { UpgradePlanAlert } from '@/components/upgrade-plan-alert';
+import { UserNormalCard } from '../../user/user-card';
 
-type Props = { label: string, className?: string }
+type Props = { 
+  label: string, 
+  className?: ClassValue, 
+  iconClassName?: ClassValue 
+}
 
-export const CreateTeamButton = ({ label, className }: Props) => {
+export const CreateTeamButton = ({ label, className, iconClassName }: Props) => {
 
   const { data } = useSession()
   const { invalidateQueries } = useQueryClient()
@@ -44,18 +48,19 @@ export const CreateTeamButton = ({ label, className }: Props) => {
   const permission = useGP()
   const deferredEmail = useDeferredValue(userEmail)
 
+  console.log({ permission })
+
   const searchUsersQuery = useQuery({
-    queryKey: ['users', 'search', deferredEmail],
-    queryFn: ({ queryKey }) => searchUsers(queryKey[2] as string, data?.user.id as any),
-    enabled: !!userEmail === true
+    queryKey: ['users', 'search'],
+    queryFn: () => searchUsers(userEmail, data?.user.id as any)
   })
 
   const form = useForm({
     resolver: zodResolver(CreateTeamSchema),
     defaultValues: {
-      'name': '',
-      'about': '',
-      'emails': []
+      name: '',
+      about: '',
+      emails: []
     }
   })
 
@@ -90,7 +95,12 @@ export const CreateTeamButton = ({ label, className }: Props) => {
   return ( 
     <Dialog open={modal} onOpenChange={setModal}>
 
-      <DialogTrigger className={cn('bg-secondaryMain text-sm transition-all hover:bg-secondaryMain/80 flex items-center gap-2 font-medium rounded-md px-4 h-9', className)}><Plus className='size-4' /> {label}</DialogTrigger>
+      <DialogTrigger 
+        className={cn('bg-secondaryMain text-sm transition-all hover:bg-secondaryMain/80 flex items-center gap-2 font-medium rounded-md px-4 h-9', className)}
+      >
+        <Plus className={cn('size-4', iconClassName)} /> 
+        {label}
+      </DialogTrigger>
 
       <DialogContent className="min-w-[50%]">
 
@@ -110,6 +120,7 @@ export const CreateTeamButton = ({ label, className }: Props) => {
             </TabsList>
             
             <TabsContent value="team-details">
+
               <Form {...form}>
 
                 <form onSubmit={form.handleSubmit(handleCreate)} className='space-y-4'>
@@ -148,7 +159,6 @@ export const CreateTeamButton = ({ label, className }: Props) => {
                   ): (
                     <UpgradePlanAlert />
                   )}
-                  
                 </form>
               </Form>
 
@@ -167,34 +177,37 @@ export const CreateTeamButton = ({ label, className }: Props) => {
                 </div>
               </div>
 
-              {searchUsersQuery.isRefetching || searchUsersQuery.isLoading ? (
+              {searchUsersQuery.isLoading ? (
                 <LoadingSpinner className='mt-4' />
               ): (
                 <React.Fragment>
-                  {searchUsersQuery.data && searchUsersQuery.data.length > 0 && (
+                  {searchUsersQuery.data && searchUsersQuery.data.length > 0 ? (
                     <section className='space-y-2 mt-4'>
+
                       {searchUsersQuery.data.map((user) => (
-                        <div className='flex justify-between items-center' key={`search-user-idx-${user?.id}`}>
-                          <div className="flex gap-2 items-center">
-                            <UserHoverCard date={user.createdAt} user={user as User} />
-                            <div>
-                              <Link className='text-sm text-gray-500' href={``}>@{user.username} - {user.jobTitle}</Link>
-                            </div>
-                          </div>
+                      
+                      <div className='flex justify-between items-center' key={`search-user-idx-${user?.id}`}>
+                          
+                          <UserNormalCard user={user as User} />
+
                           <div>
                             {finalInvitations.find(current => current.email === user.email) ? (
-                              <Button variant='outline' size='sm' className='text-gray-500' onClick={ () => handleRemoveInvitation(user as User)}>
-                                <X className='size-4' />
+                              <Button variant='outline' size='sm' className='p-1 px-2 rounded-full bg-secondaryMain border-secondaryMain text-white hover:bg-secondaryMain hover:text-white' onClick={ () => handleRemoveInvitation(user as User)}>
+                                <Check className='size-4' />
                               </Button>
                             ): (
-                              <Button variant='outline' size='sm' className='text-gray-500' onClick={ () => handleAddInvitations(user as User)}>
+                              <Button variant='outline' size='sm' className='text-gray-500 p-1 px-2 rounded-full' onClick={ () => handleAddInvitations(user as User)}>
                                 <UserPlus className='size-4' />
                               </Button>
                             )}
                           </div>
+                          
                         </div>
+
                       ))}
                     </section>
+                  ): (
+                    <div className='mt-2 font-normal text-xs text-gray-500'>{userEmail ? 'No Users found.' : `Try typing username or email of team member.`}</div>
                   )}
                 </React.Fragment>
               )}
@@ -203,29 +216,29 @@ export const CreateTeamButton = ({ label, className }: Props) => {
             <TabsContent value='team-invitations'>
 
               {finalInvitations.length === 0 ? (
-                <div className='bg-gray-100 mt-4 p-2 px-4 font-bold rounded-sm shadow-sm'>No Invitations Added!</div>
+                <div className='bg-gray-100 mt-4 p-2 px-4 font-semibold rounded-sm shadow-sm'>No Invitations Added!</div>
               ): (
                 <section className='space-y-2 mt-4'>
                   {finalInvitations.map((user) => (
+                    
                     <div className='flex justify-between items-center' key={`final-inv-idx-${user.id}`}>
-                      <div className="flex gap-2 items-center">
-                        <UserHoverCard date={user.createdAt} user={user as User} />
-                        <div>
-                          <Link className='text-sm text-gray-500' href={``}>@{user.username} - {user.jobTitle}</Link>
-                        </div>
-                      </div>
+                      
+                      <UserNormalCard user={user as User} />
+
                       <div>
                         {finalInvitations.find(current => current.email === user.email) ? (
-                          <Button variant='outline' size='sm' className='text-gray-500' onClick={ () => handleRemoveInvitation(user as User)}>
-                            <X className='size-4' />
+                          <Button variant='outline' size='sm' className='text-gray-500 p-1 px-2 rounded-full' onClick={ () => handleRemoveInvitation(user as User)}>
+                            <Check className='size-4' />
                           </Button>
                         ): (
-                          <Button variant='outline' size='sm' className='text-gray-500' onClick={ () => handleAddInvitations(user as User)}>
+                          <Button variant='outline' size='sm' className='text-gray-500 p-1 px-2 rounded-full' onClick={ () => handleAddInvitations(user as User)}>
                             <UserPlus className='size-4' />
                           </Button>
                         )}
                       </div>
+                      
                     </div>
+
                   ))}
                 </section>
               )}

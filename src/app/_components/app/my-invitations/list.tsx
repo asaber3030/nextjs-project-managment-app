@@ -11,7 +11,7 @@ export const ListAllInvitations = ({ invitations }: Props) => {
   return ( 
     <div className='mt-4'>
       {invitations.length > 0 ? (
-        <div className='grid grid-cols-4 gap-2'>
+        <div className='grid grid-cols-3 gap-2'>
           {invitations.map(invitation => (
             <OneInvitation invitation={invitation} key={`invitation-idx-${invitation.id}`} />
           ))}

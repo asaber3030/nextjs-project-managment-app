@@ -1,10 +1,10 @@
 import { getTeamAnalytics } from "@/actions/team";
-import { getTeam } from "@/actions/user-data";
+import { getCurrent, getTeam } from "@/actions/user-data";
+import { isMemberOfTeam } from "@/actions/check";
 import { notFound } from "next/navigation";
 
 import { DisplayTeamInfo } from "@/app/_components/app/teams/team-view";
 import { Team } from "@/types";
-import { isMemberOfTeam } from "@/actions/check";
 
 type Props = {
   params: { teamId: string }
@@ -16,7 +16,9 @@ const SingleTeamPage = async ({ params }: Props) => {
   const analytics = await getTeamAnalytics(+params.teamId)
   const isMember = await isMemberOfTeam(+params.teamId)
 
-  if (!team || !isMember) return notFound();
+  const current = await getCurrent()
+
+  if (!team || (!isMember && current?.id != team.ownerId)) return notFound();
 
   return (
     <DisplayTeamInfo 

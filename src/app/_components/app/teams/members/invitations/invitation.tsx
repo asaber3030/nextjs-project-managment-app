@@ -37,7 +37,7 @@ export const Invitation = ({ invitation }: Props) => {
       <section className='flex items-center gap-2'>
         <UserHoverCard user={invitation.user as User} date={invitation.sentIn} />
         <section>
-          <h3 className='font-bold'>{invitation?.user?.name}</h3>
+          <h3 className='font-semibold'>{invitation?.user?.name}</h3>
           <p className='text-xs'>@{invitation?.user?.jobTitle}</p>
         </section>
       </section>

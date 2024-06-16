@@ -3,13 +3,18 @@
 import React from "react";
 import Link from "next/link";
 
-import { ListChecks, Folder, CheckCheck, FolderPlus, Mail, Cog, Home, Palette, Users, Trash } from "lucide-react"
+import { ListChecks, Folder, CheckCheck, FolderPlus, Cog, Home, Palette, Users, Trash } from "lucide-react"
+
+import { usePathname } from "next/navigation";
 import { route } from "@/lib/route";
+import { cn } from "@/lib/utils";
 
 export const TeamSidebarSettings = ({ teamId }: { teamId: number }) => {
 
+  const pathname = usePathname()
+
   const mainLinksURLs = [
-    { url: route.dashboard(), label: 'Dashboard', icon: Home },
+    { url: route.viewTeam(teamId), label: 'Dashboard', icon: Home },
     { url: route.viewTeamProjects(teamId), label: 'Projects', icon: Folder },
     { url: route.viewTeamTasks(teamId), label: 'Tasks', icon: ListChecks },
     { url: route.viewTeamBoards(teamId), label: 'Boards', icon: Palette },
@@ -19,7 +24,6 @@ export const TeamSidebarSettings = ({ teamId }: { teamId: number }) => {
 
   const settingsURLs = [
     { url: route.addTeamProject(teamId), label: 'Create Project', icon: FolderPlus },
-    { url: route.viewTeamMailSystem(teamId), label: 'Mail', icon: Mail },
     { url: route.viewTeamSettings(teamId), label: 'Settings', icon: Cog },
     { url: route.deleteTeam(teamId), label: 'Delete Team', icon: Trash },
   ]
@@ -31,7 +35,14 @@ export const TeamSidebarSettings = ({ teamId }: { teamId: number }) => {
         <h3 className='text-gray-600 font-semibold text-sm mb-2 ml-4'>Team</h3>
         <div className='space-y-0.5'>
           {mainLinksURLs.map(({ icon: Icon, label, url }, idx) => (
-            <Link key={`main-sidebar-item-idx-${idx}`} href={url} className='flex gap-4 text-sm items-center p-1 transition-all hover:bg-secondary rounded-md px-4'>
+            <Link 
+              href={url} 
+              key={`main-sidebar-item-idx-${idx}`} 
+              className={cn(
+                'flex gap-4 text-sm items-center p-1 transition-all hover:bg-secondary rounded-sm px-4',
+                pathname.endsWith(url) && 'hover:bg-secondaryMain bg-secondaryMain'
+              )}
+            >
               <Icon className='size-4' />
               <span>{label}</span>
             </Link>

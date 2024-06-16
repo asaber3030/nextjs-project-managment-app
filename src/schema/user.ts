@@ -1,4 +1,3 @@
-import { ACCEPTED_IMAGE_TYPES, MAX_FILE_SIZE } from '@/lib/constants'
 import { usernameRegEx } from '@/lib/regex'
 import { z } from 'zod'
 
@@ -8,9 +7,11 @@ export const RegisterSchema = z.object({
   password: z.string().min(8, { message: 'Password must be at least 8 characters' }),
   jobTitle: z.string().min(3, { message: 'Job title must be at least 3 characters' }),
   email: z.string().email(),
+  photo: z.string().optional(),
 })
+
 export const LoginSchema = z.object({
-  email: z.string().email(),
+  email: z.string().min(1, { message: 'Email address is required!' }).email(),
   password: z.string().min(1, { message: 'Password is required!' }),
 })
 export const UserDetailsSchema = z.object({

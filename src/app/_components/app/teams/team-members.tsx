@@ -21,11 +21,6 @@ type Props = { members: TeamMember[], teamId: number }
 
 export const DisplayTeamMembers = ({ members, teamId }: Props) => {
 
-  const { team } = useTeam(members?.[0]?.teamId)
-  
-  const user = useUser()
-  const roleInviteMembers = useRole('members', 'invite-members', teamId)
-
   if (members.length === 0) {
     return (
       <section>
@@ -37,13 +32,7 @@ export const DisplayTeamMembers = ({ members, teamId }: Props) => {
 
   return (
     <section>
-      <Title label='Team Members' parentClassName='mb-2'>
-        <Render 
-          render={<InviteButton label="Invite members" team={team as unknown as Team} />}
-          fetched={roleInviteMembers.roleFetched}
-          loading={roleInviteMembers.roleLoading}
-          access={roleInviteMembers.access || user?.id === team?.ownerId}
-        />
+      <Title disableIcon label='Team Members' parentClassName='mb-2'>
         <Link href={route.viewTeamMembers(members[0].teamId)}><Button variant='outline'><Users className='size-3' /> View All</Button></Link>
       </Title>
       <div className="grid grid-cols-1 xl:grid-cols-4 md:grid-cols-3 gap-1">

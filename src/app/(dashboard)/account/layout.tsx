@@ -12,7 +12,6 @@ const AccountLayout = async ({ children }: { children: React.ReactNode }) => {
   return (
     <div>
       <AccountBackground />
-
       <div className='xl:flex xl:-translate-y-14 xl:px-8 p-0 mt-4 gap-4'>
         <AccountSidebar counts={counts} />
         <div className='w-full bg-white rounded-md shadow-sm h-fit'>

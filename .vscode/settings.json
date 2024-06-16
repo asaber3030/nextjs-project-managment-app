@@ -3,5 +3,6 @@
     "hookform"
   ],
   "WillLuke.nextjs.addTypesOnSave": true,
-  "WillLuke.nextjs.hasPrompted": true
+  "WillLuke.nextjs.hasPrompted": true,
+  "window.title": "${dirty}${activeEditorShort}"
 }

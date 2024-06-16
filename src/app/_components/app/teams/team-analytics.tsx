@@ -32,16 +32,16 @@ export const DisplayTeamAnalytics = ({ analytics, team }: Props) => {
   return (
     <section>
 
-      <h1 className='text-xl font-semibold'>Analytics</h1>
+      <h1 className='text-xl font-medium'>Analytics</h1>
 
       <div className='mt-2 grid xl:grid-cols-5 gap-2'>
 
         {items.map(({ icon: Icon, label, numbers, buttonLabel, url }, idx) => (
-          <div key={`single-item-analytics-${idx}`} className="flex flex-col text-center justify-center rounded-md p-2 border space-y-2 bg-white shadow-sm">
+          <div key={`single-item-analytics-${idx}`} className="flex flex-col text-center border justify-center rounded-md p-2 space-y-2 bg-white shadow-sm">
             <Icon className='mx-auto' />
             <span>{label}</span> 
-            <Badge className="w-full text-center mb-2" variant='outline'>{numbers}</Badge>
-            <Link className='w-full block' href={url}><Button className='w-full' variant='secondary'>{buttonLabel}</Button></Link>
+            <Badge className="w-full text-center mb-2 mx-auto" variant='outline'>{numbers}</Badge>
+            <Link className='w-full block' href={url}><Button className='w-full h-7 text-xs' variant='secondary'>{buttonLabel}</Button></Link>
           </div>
         ))}
 

@@ -1,32 +1,37 @@
 import { Plan } from "@/types";
 
 import { virtualInfinityNumber } from "@/lib/constants";
-import { cn } from "@/lib/utils";
+import { cn, formatNumber } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, XCircle } from "lucide-react";
+import { ClassValue } from "clsx";
 
 type Props = {
   plan: Plan
   idx: number
+  showButtons?: boolean
+  className?: ClassValue
 }
 
-export const OnePlan = ({ plan, idx }: Props) => {
+export const OnePlan = ({ plan, idx, showButtons = true, className }: Props) => {
 
   return ( 
-    <div key={`plan-idx-view-${plan.id}`} className={cn("border p-4 h-fit rounded-md shadow-sm space-y-4", idx === 1 && "xl:scale-105 bg-main text-white")}>
+    <div key={`plan-idx-view-${plan.id}`} className={cn(className && className, "border-2 p-4 h-fit rounded-xl shadow-sm space-y-4", idx === 1 && "xl:scale-105 bg-main text-white")}>
       <h3 className="text-center text-3xl font-extrabold">{plan.name}</h3>
       
       <p className="flex gap-1 justify-center items-center">
         <span className="text-lg text-green-700 font-extrabold">$</span>
-        <span className="text-green-700 text-6xl font-extrabold">{plan.price}</span>
+        <span className="text-green-700 text-6xl font-extrabold">{formatNumber(plan.price)}</span>
         <span className="text-gray-400 text-sm">/ Month</span>
       </p>
 
-      <div className="flex gap-1 justify-center">
-        <Button variant="secondaryMain">Get Early Access</Button>
-        <Button variant="outline" className={cn(idx === 1 && "text-black")}>Subscribe</Button>
-      </div>
+      {showButtons && (
+        <div className="flex gap-1 justify-center">
+          <Button variant="secondaryMain">Get Early Access</Button>
+          <a href={plan.paymentLink}><Button variant="outline" className={cn(idx === 1 && "text-black")}>Subscribe</Button></a>
+        </div>
+      )}
 
       <ul className="px-4 space-y-4">
         <li className="flex gap-3 items-center">

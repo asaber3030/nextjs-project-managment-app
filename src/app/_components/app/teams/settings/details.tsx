@@ -11,10 +11,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Save } from "lucide-react";
 import { Input } from "@/components/ui/input"
-import { Title } from "@/components/title";
 import { LoadingButton } from "@/components/loading-button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Textarea } from "@/components/ui/textarea";
+import { NoPermissionAlert } from "@/components/no-permissions-alert";
 
 type Props = {
   team: Team
@@ -40,47 +40,45 @@ export const TeamDetails = ({ team }: Props) => {
   }
 
   return ( 
-    <div>
-      <Title label="Update Team Details" parentClassName='mb-4' />
+    <Form {...form}>
 
-      <Form {...form}>
-
-        <form onSubmit={form.handleSubmit(handleUpdate)} className='space-y-4'>
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Team Name / Title</FormLabel>
-                <FormControl>
-                  <Input placeholder="example@domain.com" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="about"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Short Brief (optional)</FormLabel>
-                <FormControl>
-                  <Textarea placeholder="About team" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {(user?.id === team.ownerId || roleUpdateTeamSettings.access) && (
-            <LoadingButton size='sm' loading={updateTeamLoading} variant='secondaryMain'><Save className='size-4' /> Save Details</LoadingButton>
+      <form onSubmit={form.handleSubmit(handleUpdate)} className='space-y-4'>
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Team Name / Title</FormLabel>
+              <FormControl>
+                <Input placeholder="example@domain.com" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
           )}
-        </form>
+        />
 
-      </Form>
+        <FormField
+          control={form.control}
+          name="about"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Short Brief (optional)</FormLabel>
+              <FormControl>
+                <Textarea placeholder="About team" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-    </div>
+        {(user?.id === team.ownerId || roleUpdateTeamSettings.access) ? (
+          <LoadingButton size='sm' loading={updateTeamLoading} variant='secondaryMain'><Save className='size-4' /> Save Details</LoadingButton>
+        ): (
+          <NoPermissionAlert actionName="Update team settings" />
+        )}
+      </form>
+
+    </Form>
+
   );
 }

@@ -12,11 +12,11 @@ import { LoadingSpinner } from "@/components/loading-spinner";
 import { LoadingButton } from "@/components/loading-button";
 import { UserHoverCard } from "@/app/_components/user/hover-card";
 
+import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { assignTaskTo } from "@/actions/project";
-import { cn } from "@/lib/utils";
-import { QueryKeys } from "@/lib/query-keys";
 
+import { QueryKeys } from "@/lib/query-keys";
 import { TeamProjectTask } from "@/types";
 import { ClassValue } from "clsx";
 
@@ -57,7 +57,7 @@ export const AssignTaskAction = ({ task, label, className, iconClassName }: Prop
       <TooltipProvider>
         <Tooltip delayDuration={10}>
           <TooltipTrigger asChild>
-            <DialogTrigger className={cn('rounded-sm size-8 flex items-center justify-center bg-secondary text-secondary-foreground hover:bg-secondary/80', className)}><Undo className={cn('size-4', iconClassName)} /> {label}</DialogTrigger>
+            <DialogTrigger className={cn('rounded-sm size-8 flex items-center justify-center bg-secondary text-secondary-foreground hover:bg-secondary/60', className)}><Undo className={cn('size-4', iconClassName)} /> {label}</DialogTrigger>
           </TooltipTrigger>
           <TooltipContent>
             <p>Reassign tasks</p>
@@ -84,7 +84,7 @@ export const AssignTaskAction = ({ task, label, className, iconClassName }: Prop
                   <div className='flex items-centers gap-2'>
                     <UserHoverCard user={member.user} date={member.joinedIn} />
                     <div>
-                      <h2 className='font-semibold'>{member.user.name}</h2>
+                      <h2 className='font-medium'>{member.user.name}</h2>
                       <p className='text-xs'>{member.user.jobTitle}</p>
                     </div>
                   </div>

@@ -17,6 +17,8 @@ import { Badge } from "@/components/ui/badge";
 
 import { TeamProject, TeamProjectTask } from "@/types";
 import { Prisma, Status } from "@prisma/client";
+import { EmptyState } from "@/components/empty-state";
+import React from "react";
 
 type Props = {
   params: { teamId: string },
@@ -59,8 +61,6 @@ const AssignedTeamTasks = async ({ params, searchParams }: Props) => {
     }
   })
 
-  if (!isMember) return notFound()
-
   return (
     <div>
 
@@ -68,35 +68,41 @@ const AssignedTeamTasks = async ({ params, searchParams }: Props) => {
         <FilterTeamProjects projects={projectsOnly as TeamProject[]} />
       </Title>
 
-      {projects.map(project => {
-
-        const countAccepted = project.projectTasks.filter(t => t.status === Status.Accepted)
-        const countPending = project.projectTasks.filter(t => t.status === Status.Pending)
-        const countRefused = project.projectTasks.filter(t => t.status === Status.Refused)
-
-        return (
-          <div key={`project-details-tasks-${project.id}`} className='mb-4'>
-            
-            <div className='flex justify-between items-center'>
-              <Link href='' className='block hover:underline text-lg mb-2 font-medium'>{project.name}</Link>
-              <div className='flex gap-1'>
-                <Badge variant={badgeVariant('Accepted', true)} className='text-xs rounded-full font-medium'>{countAccepted.length} Accepted</Badge>
-                <Badge variant={badgeVariant('Pending', true)} className='text-xs rounded-full font-medium'>{countPending.length} Pending</Badge>
-                <Badge variant={badgeVariant('Refused', true)} className='text-xs rounded-full font-medium'>{countRefused.length} Refused</Badge>
+      {projects.length === 0 ? (
+        <EmptyState title="No Projects." />
+      ): (
+        <React.Fragment>
+          {projects.map(project => {
+    
+            const countAccepted = project.projectTasks.filter(t => t.status === Status.Accepted)
+            const countPending = project.projectTasks.filter(t => t.status === Status.Pending)
+            const countRefused = project.projectTasks.filter(t => t.status === Status.Refused)
+    
+            return (
+              <div key={`project-details-tasks-${project.id}`} className='mb-4'>
+                
+                <div className='flex justify-between items-center'>
+                  <Link href='' className='block hover:underline text-lg mb-2 font-medium'>{project.name}</Link>
+                  <div className='flex gap-1'>
+                    <Badge variant={badgeVariant('Accepted', true)} className='text-xs rounded-full font-medium'>{countAccepted.length} Accepted</Badge>
+                    <Badge variant={badgeVariant('Pending', true)} className='text-xs rounded-full font-medium'>{countPending.length} Pending</Badge>
+                    <Badge variant={badgeVariant('Refused', true)} className='text-xs rounded-full font-medium'>{countRefused.length} Refused</Badge>
+                  </div>
+                </div>
+    
+                {project.projectTasks.length === 0 && (
+                  <EmptyData title="No Tasks." />
+                )}
+                <div className='grid grid-cols-1 xl:grid-cols-2 gap-2'>
+                  {project.projectTasks.map(task => (
+                    <OneTask key={`project-task-idx-${task.id}`} task={task as TeamProjectTask} />
+                  ))}
+                </div>
               </div>
-            </div>
-
-            {project.projectTasks.length === 0 && (
-              <EmptyData title="No Tasks." />
-            )}
-            <div className='grid grid-cols-1 xl:grid-cols-3 gap-2'>
-              {project.projectTasks.map(task => (
-                <OneTask key={`project-task-idx-${task.id}`} task={task as TeamProjectTask} />
-              ))}
-            </div>
-          </div>
-        )
-      })}
+            )
+          })}
+        </React.Fragment>
+      )}
 
     </div>
   );

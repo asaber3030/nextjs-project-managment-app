@@ -7,7 +7,7 @@ import { useParams } from "next/navigation";
 import { zodResolver } from '@hookform/resolvers/zod'
 
 import { Edit2 } from "lucide-react";
-import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
+import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { LoadingButton } from "@/components/loading-button";
@@ -37,6 +37,7 @@ export const UpdateBoardAction = ({ textColor, backgroundColor, board }: Props) 
   const teamId = Number(params.teamId)
   const projectId = Number(params.projectId)
 
+  const [open, setOpen] = useState(false)
   const [bgColor, setBgColor] = useState(board.backgroundColor)
   const [txtColor, setTxtColor] = useState(board.textColor)
 
@@ -55,6 +56,7 @@ export const UpdateBoardAction = ({ textColor, backgroundColor, board }: Props) 
     onSuccess: (data) => {
       toast.message(data.message)
       queryClient.invalidateQueries({ queryKey: QueryKeys.teamProjectBoards(teamId, projectId) })
+      setOpen(false)
     }
   })
 
@@ -63,16 +65,16 @@ export const UpdateBoardAction = ({ textColor, backgroundColor, board }: Props) 
   }
 
   return ( 
-    <AlertDialog>
+    <Dialog onOpenChange={setOpen} open={open}>
       
       <TooltipProvider>
         <Tooltip delayDuration={10}>
           <TooltipTrigger asChild>
-            <AlertDialogTrigger
+            <DialogTrigger
               style={{ backgroundColor: textColor, color: backgroundColor }}
               className={cn(
                 'rounded-sm size-8 flex items-center justify-center'
-              )}><Edit2 className='size-4' /></AlertDialogTrigger>
+              )}><Edit2 className='size-4' /></DialogTrigger>
           </TooltipTrigger>
           <TooltipContent>
             <p>Update Board</p>
@@ -80,11 +82,11 @@ export const UpdateBoardAction = ({ textColor, backgroundColor, board }: Props) 
         </Tooltip>
       </TooltipProvider>
 
-      <AlertDialogContent className='min-w-[850px]'>
+      <DialogContent className='min-w-[850px]'>
 
-        <AlertDialogHeader>
-          <AlertDialogTitle>Updating board</AlertDialogTitle>
-        </AlertDialogHeader>
+        <DialogHeader>
+          <DialogTitle>Updating board</DialogTitle>
+        </DialogHeader>
 
         <Form {...form}>
           
@@ -170,17 +172,17 @@ export const UpdateBoardAction = ({ textColor, backgroundColor, board }: Props) 
               )}
             />
 
-            <AlertDialogFooter>
-              <AlertDialogCancel className='px-4 h-9'>Cancel</AlertDialogCancel>
+            <DialogFooter>
+              <DialogClose className='px-4 h-9'>Cancel</DialogClose>
               <LoadingButton type='submit' loading={updateMutation.isPending} className='px-4 h-9'>Update</LoadingButton>
-            </AlertDialogFooter>        
+            </DialogFooter>        
 
           </form>
 
         </Form>
 
-      </AlertDialogContent>
+      </DialogContent>
       
-    </AlertDialog>
+    </Dialog>
   );
 }

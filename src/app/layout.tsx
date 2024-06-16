@@ -8,21 +8,20 @@ import { cn } from '@/lib/utils'
 import { authOptions } from '@/services/auth'
 import { getServerSession } from 'next-auth'
 import { getNotifications } from '@/actions/user-data'
-import { User } from '@/types'
 
 import { Toaster } from "@/components/ui/sonner"
 import { Navbar } from './_components/app/navbar/navbar'
-import { Footer } from './_components/app/footer'
 
 import { NextAuthProvider } from '@/providers/next-auth'
 import { UserDataProvider } from '@/providers/user-data-provider'
 import { NotificationsProvider } from '@/providers/notifications'
+import { User } from '@/types'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Platform',
-  description: 'Platform is created to help teams share informations add tasks to team members.',
+  description: 'Platform is created to help teams share informations, add tasks asto team members.',
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {

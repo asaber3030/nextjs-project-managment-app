@@ -22,7 +22,7 @@ export const OneBoard = ({ board }: Props) => {
         color: board.textColor
       }}>
       
-      <h2 className='text-lg text-center font-semibold'>{board.title}</h2>
+      <h2 className='text-lg text-center font-medium'>{board.title}</h2>
       <p className='text-xs text-center mt-2 opacity-70'>{board.description}</p>
       
       <section className='text-center w-fit flex flex-col justify-center mt-4'>
@@ -30,7 +30,7 @@ export const OneBoard = ({ board }: Props) => {
           <AvatarImage src={board.owner.photo} />
           <AvatarFallback>{board.owner.name[0]}</AvatarFallback>
         </Avatar>
-        <Link href='' className='font-bold'>{board.owner.name}</Link>
+        <Link href='' className='font-semibold'>{board.owner.name}</Link>
       </section>
       
       {user?.id == board.ownerId && (

@@ -14,7 +14,7 @@ export const MemberDetails = ({ member }: Props) => {
       
       <section className='text-center px-4 col-span-2 flex flex-col justify-center items-center'>
         <UserAvatar className='mx-auto' photo={member.user.photo} />
-        <h2 className='text-lg font-semibold capitalize'>{member.user.name}</h2>
+        <h2 className='text-lg font-medium capitalize'>{member.user.name}</h2>
         <p className='text-xs text-gray-500'>{member.user.jobTitle}</p>
         <div className='flex gap-1 mt-2'>
           <Button variant='outline' className='text-gray-600 px-4'>Update</Button>

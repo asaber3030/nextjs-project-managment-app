@@ -1,4 +1,4 @@
-import { getTeam } from "@/actions/user-data";
+import { getCurrent, getTeam } from "@/actions/user-data";
 import { Team } from "@/types";
 import { TeamInvitations } from "@/app/_components/app/teams/members/invitations/list";
 
@@ -12,8 +12,11 @@ type Props = {
 const TeamMembersPage = async ({ params }: Props) => {
   const team = await getTeam(Number(params.teamId)) as unknown as Team
   const isMember = await isMemberOfTeam(+params.teamId)
+  const current = await getCurrent()
+
+  if (!team) return notFound();
+  if ((!isMember && current?.id != team.ownerId)) return notFound();
   
-  if (!isMember) return notFound();
   return (
     <TeamInvitations team={team} />
   );

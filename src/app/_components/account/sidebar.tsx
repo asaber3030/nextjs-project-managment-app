@@ -31,7 +31,7 @@ export const AccountSidebar = ({ counts }: Props) => {
       <div className='w-fit mx-auto my-4'>
         <div className='relative'>
           <Image src={user?.photo} alt='Me' width={200} height={200} className='relative rounded-full overflow-hidden w-[120px] h-[120px] object-cover mx-auto' />
-          <Link href={route.accountPictures()} className='size-7 absolute right-5 bottom-0 bg-black outline p-1 text-white rounded-full flex items-center justify-center'><Camera className='size-4' /></Link>
+          <Link href={route.account('picture')} className='size-7 absolute right-5 bottom-0 bg-black outline p-1 text-white rounded-full flex items-center justify-center'><Camera className='size-4' /></Link>
         </div>
       
         <div className='text-center mt-3'>

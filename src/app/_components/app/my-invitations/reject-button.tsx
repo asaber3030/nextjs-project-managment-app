@@ -18,6 +18,6 @@ export const RejectOneButton = ({ invitationId }: Props) => {
   }
 
   return ( 
-    <LoadingButton loading={rejectIsPending} onClick={handleReject} variant='outline'><X className='size-4' /> Reject</LoadingButton>
+    <LoadingButton loading={rejectIsPending} onClick={handleReject} variant='destructive' className='px-4 h-8'><X className='size-4' /> Reject</LoadingButton>
   );
 }

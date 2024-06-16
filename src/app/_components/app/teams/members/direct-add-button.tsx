@@ -54,7 +54,7 @@ export const DirectAddMemberButton = ({ label = 'Direct Add', icon: Icon = Plus,
   return ( 
     <Dialog open={modal} onOpenChange={setModal}>
 
-      <DialogTrigger className='bg-white flex gap-2 text-sm hover:bg-border/80 transition-all items-center border rounded-sm px-2 py-1'><Icon className='size-4' /> {label}</DialogTrigger>
+      <DialogTrigger className='bg-white text-black font-medium flex gap-2 text-sm hover:bg-border/80 transition-all items-center border rounded-sm px-2 py-1'><Icon className='size-4' /> {label}</DialogTrigger>
 
       <DialogContent className='min-w-[50%]'>
 

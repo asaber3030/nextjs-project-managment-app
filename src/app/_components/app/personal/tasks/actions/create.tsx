@@ -21,9 +21,10 @@ import { Plus } from "lucide-react"
 type Props = { 
   label?: string
   className?: string
+  iconClassName?: string
 }
 
-export const CreatePersonalTask = ({ className, label = 'Create' }: Props) => {
+export const CreatePersonalTask = ({ className, iconClassName, label = '' }: Props) => {
 
   const { createMutate } = usePersonalTask()
 
@@ -52,7 +53,10 @@ export const CreatePersonalTask = ({ className, label = 'Create' }: Props) => {
   return ( 
     <Dialog open={modal} onOpenChange={setModal}>
 
-      <DialogTrigger className={cn(' size-14 rounded-full flex items-center justify-center bg-secondaryMain text-black ', className)}><Plus className='size-7' /></DialogTrigger>
+      <DialogTrigger className={cn('size-14 rounded-full flex items-center justify-center bg-secondaryMain text-black ', className)}>
+        <Plus className={cn('size-7', iconClassName)} />
+        {label && label}
+      </DialogTrigger>
 
       <DialogContent className='min-w-[50%]'>
         

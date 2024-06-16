@@ -5,10 +5,10 @@ import { useTeams } from "@/hooks/useTeams";
 
 import { Team } from "@prisma/client";
 
-import { OneTeam } from "./team";
 import { CreateTeamButton } from "./create-team-button";
-import { Title } from "@/components/title";
 import { TeamSkeleton } from "../../skeleton/team-skeleton";
+import { OneTeam } from "./team";
+import { Title } from "@/components/title";
 
 export const TeamsListDashboard = () => {
 
@@ -36,7 +36,11 @@ export const TeamsListDashboard = () => {
       <div className='grid grid-cols-1 xl:grid-cols-4 gap-2'>
       
         {teams?.map((team: Team) => (
-          <OneTeam team={team} key={`team-data-idx-${team.id}`} teamId={team.id} />
+          <OneTeam 
+            teamId={team.id} 
+            team={team} 
+            key={`team-data-idx-${team.id}`} 
+          />
         ))}
 
       </div>

@@ -43,10 +43,8 @@ export const InviteButton = ({ label = 'Invite', className, icon: Icon = UserPlu
   const [filter, setFilter] = useState<string>('')
   const [finalInvitations, setFinalInvitations] = useState<User[]>([])
 
-  const defFilter = useDeferredValue(filter)
-
   const searchUsersQuery = useQuery({
-    queryKey: ['users', 'search', team.id, defFilter],
+    queryKey: ['users', 'search', team.id, filter],
     queryFn: ({ queryKey }) => searchUnInvitedMembers(queryKey[3] as string, team.id as number),
   })
 
@@ -71,7 +69,7 @@ export const InviteButton = ({ label = 'Invite', className, icon: Icon = UserPlu
   
   return ( 
     <Dialog>
-      <DialogTrigger className={cn('flex gap-2 text-sm bg-white hover:bg-border/80 transition-all items-center border rounded-sm px-2 py-1', className)}><Icon className='size-4' /> {label}</DialogTrigger>
+      <DialogTrigger className={cn('flex gap-2 text-sm text-black font-medium  bg-white hover:bg-border/80 transition-all items-center border rounded-sm px-2 py-1', className)}><Icon className='size-4' /> {label}</DialogTrigger>
 
       <DialogContent className='min-w-[50%]'>
 
@@ -129,7 +127,7 @@ export const InviteButton = ({ label = 'Invite', className, icon: Icon = UserPlu
           <TabsContent value='team-invitations'>
 
             {finalInvitations.length === 0 ? (
-              <div className='bg-gray-100 mt-4 p-2 px-4 font-bold rounded-sm shadow-sm'>No Invitations Added!</div>
+              <div className='bg-gray-100 mt-4 p-2 px-4 font-semibold rounded-sm shadow-sm'>No Invitations Added!</div>
             ): (
               <section className='space-y-2 mt-4'>
                 {finalInvitations.map((user) => (

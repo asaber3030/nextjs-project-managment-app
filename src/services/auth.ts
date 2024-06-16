@@ -2,8 +2,8 @@ import { PrismaAdapter } from '@next-auth/prisma-adapter'
 import { NextAuthOptions } from "next-auth";
 
 import CredentialsProvider from "next-auth/providers/credentials";
-import db from './prisma';
 
+import db from './prisma';
 import bcrypt from 'bcrypt'
 
 export const authOptions: NextAuthOptions = {
@@ -22,6 +22,7 @@ export const authOptions: NextAuthOptions = {
         email: { label: "Email", type: "email", placeholder: "example@domain.com" },
         password: { label: "Password", type: "password" }
       },
+      //@ts-ignore
       async authorize(credentials) {
 
         if (!credentials?.email || !credentials.password) {
@@ -35,10 +36,16 @@ export const authOptions: NextAuthOptions = {
 
         if (!user) return null;
 
+        const updateProvider = await db.user.update({ 
+          where: { id: user.id }, 
+          data: { provider: String(user.id) },
+          include: { plan: true } 
+        })
+
         const comparePassword = await bcrypt.compare(credentials.password, user.password)
         if (!comparePassword) return null
 
-        const { password, ...remainingUser } = user
+        const { password, ...remainingUser } = updateProvider
 
         return {
           ...remainingUser
@@ -48,8 +55,9 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async redirect({ baseUrl }) {
-      return `${baseUrl}/dashboard` 
+      return `${baseUrl}/dashboard`
     },
+
     async jwt({ trigger, session, token, user }) {
 
       if (trigger === "update") {
@@ -83,7 +91,7 @@ export const authOptions: NextAuthOptions = {
         ...session,
         user: {
           ...session.user,
-          ...token
+          ...token,
         }
       }
     }

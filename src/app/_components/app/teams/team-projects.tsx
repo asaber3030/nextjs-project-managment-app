@@ -31,7 +31,7 @@ export const DisplayTeamProjects = ({ team, teamId }: Props) => {
   return (
     <section>
       
-      <Title label='Projects' parentClassName='mb-2'>
+      <Title disableIcon label='Projects' parentClassName='mb-2'>
         <Render 
           render={<Link href={route.addTeamProject(team.id)} className='flex items-center gap-2'><Button variant='outline'><FolderPlus className='size-3' /> Create Project</Button></Link>}
           fetched={roleInviteMembers.roleFetched}
@@ -45,7 +45,7 @@ export const DisplayTeamProjects = ({ team, teamId }: Props) => {
       ): (
         <React.Fragment>
           {projects.length > 0 ? (
-            <div className='grid xl:grid-cols-3 md:grid-cols-1 grid-cols-1 gap-2'>
+            <div className='grid xl:grid-cols-2 md:grid-cols-1 grid-cols-1 gap-2'>
               {projects.map(project => (
                 <ProjectCard 
                   project={project} 

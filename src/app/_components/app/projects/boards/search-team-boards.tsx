@@ -24,11 +24,10 @@ export const SearchBoardsByMembers = ({ members }: Props) => {
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    if (filter == ' ') {
+    if (filter) {
       router.push(route.viewTeamBoards(+params.teamId))
       return;
     }
-    router.push(`?owner=${filter}`)
   }
 
   return ( 
@@ -41,7 +40,7 @@ export const SearchBoardsByMembers = ({ members }: Props) => {
         </SelectTrigger>
 
         <SelectContent>
-          <SelectItem value={` `}>No User</SelectItem>
+          <SelectItem value={' '}>No User</SelectItem>
           {members.map((member) => (
             <SelectItem key={`select-member-idx-${member.id}`} value={`${member.userId}`}>
               <p className='flex gap-2 items-center'>
@@ -54,7 +53,7 @@ export const SearchBoardsByMembers = ({ members }: Props) => {
 
       </Select>
       
-      <Button variant='outline' size='sm'>Find</Button>
+      <Button variant='outline' size='sm' className='h-9'>Find</Button>
 
     </form>
   );

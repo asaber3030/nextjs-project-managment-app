@@ -6,10 +6,13 @@ import { MemberActions } from "./member-actions";
 
 import { route } from "@/lib/route";
 import { Dot } from "lucide-react";
+import { useUser } from "@/hooks";
 
 type Props = { member: TeamMember }
 
 export const Member = ({ member }: Props) => {
+
+  const current = useUser()
 
   return ( 
     <div className='flex relative border bg-white p-4 pb-8 rounded-sm shadow-sm gap-3 select-none'>
@@ -18,9 +21,11 @@ export const Member = ({ member }: Props) => {
         <Link href={route.viewTeamMember(member.teamId, member.userId)}>{member.user.name}</Link>
         <p className='text-xs text-gray-500'>{member.user.jobTitle}</p>
       </div>
-      <div className='absolute top-2 right-2'>
-        <MemberActions member={member} />
-      </div>
+      {current?.id !== member.userId && (
+        <div className='absolute top-2 right-2'>
+          <MemberActions member={member} />
+        </div>
+      )}
       <div className='absolute bottom-2 right-2 text-xs text-gray-400 flex items-center gap-1'>
         {member.status}
         <Dot className='size-4' />

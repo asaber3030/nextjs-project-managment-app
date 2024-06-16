@@ -30,7 +30,7 @@ export default async function Home() {
         <div className="flex gap-8 pl-16 space-y-4">
             
           <div>
-            <h1 className="xl:text-6xl text-4xl font-bold">Welcome to <span className="font-normal text-secondaryMain">P</span>latform</h1>
+            <h1 className="xl:text-6xl text-4xl font-semibold">Welcome to <span className="font-normal text-secondaryMain">P</span>latform</h1>
             <p className="xl:font-medium mt-4 xl:text-sm text-sm font-medium text-gray-500">Where you can create, maintain, share, contribute your projects with your team. You can easily create tasks and assign to many members. Also post some boards to share something with the teams</p>
             
             <div className='flex gap-1 mt-4'>
@@ -40,12 +40,12 @@ export default async function Home() {
 
             <div className="flex gap-4 mt-4">
               <div>
-                <p className='text-2xl font-bold'>{formatNumber(25_254)}+</p>
+                <p className='text-2xl font-semibold'>{formatNumber(25_254)}+</p>
                 <h3 className='text-gray-500'>Clients</h3>
               </div>
 
               <div>
-                <p className='text-2xl font-bold'>{formatNumber(3_250)}+</p>
+                <p className='text-2xl font-semibold'>{formatNumber(3_250)}+</p>
                 <h3 className='text-gray-500'>Teams</h3>
               </div>
             </div>
@@ -63,7 +63,7 @@ export default async function Home() {
       {/* Plans */}
       <div className="container">
         
-        <h2 className="text-3xl font-semibold my-4">Plans</h2>
+        <h2 className="text-3xl font-medium my-4">Plans</h2>
 
         <div className="gap-4 grid xl:grid-cols-3 grid-cols-1">
           {plans.map((plan, idx) => (
@@ -76,7 +76,7 @@ export default async function Home() {
       {/* Services */}
       <div className="my-4 container">
 
-        <h2 className="text-3xl font-semibold my-4">Services</h2>
+        <h2 className="text-3xl font-medium my-4">Services</h2>
 
         <section className="grid xl:grid-cols-3 grid-cols-1 gap-4">
           {servicesList.map((service, idx) => (
@@ -91,7 +91,7 @@ export default async function Home() {
 
         <div className="container">
 
-          <h2 className="text-3xl font-semibold mt-4 text-center">Subscribe To newsletter!</h2>
+          <h2 className="text-3xl font-medium mt-4 text-center">Subscribe To newsletter!</h2>
           <p className="text-center text-lg text-gray-600 mb-4">Keep up-to-date with our new updates and services!</p>
 
           <div className="flex">
@@ -106,7 +106,7 @@ export default async function Home() {
       {/* Clients */}
       <div className="my-4 container">
 
-        <h2 className="text-3xl font-semibold text-center my-10">What clients said about our service?</h2>
+        <h2 className="text-3xl font-medium text-center my-10">What clients said about our service?</h2>
 
         <section className="grid xl:grid-cols-3 grid-cols-1 gap-4">
           {clientsList.map((client, idx) => (
@@ -117,8 +117,8 @@ export default async function Home() {
       </div>
 
       {/* Statistics */}
-      <div className="my-4 container">
-        <h2 className="text-3xl font-semibold text-center my-10">Our Statistics for now.</h2>
+      <div className="my-4 container min-h-[300px] flex flex-col justify-center items-center">
+        <h2 className="text-3xl font-medium text-center my-10">Our Statistics for now.</h2>
 
         <section className="grid xl:grid-cols-5 grid-cols-1 gap-4">
           {numbersList.map((stat, idx) => (

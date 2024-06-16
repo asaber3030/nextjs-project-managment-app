@@ -8,7 +8,9 @@ import { TeamMember } from "@/types";
 import { TeamMemberStatus } from "@prisma/client";
 
 import { useMembers } from "@/hooks/useMembers";
-import { useState } from "react";
+import React, { useState } from "react";
+import { useRole } from "@/hooks/useRoles";
+import { OnlySpinner } from "@/components/loading-spinner";
 
 type Props = { member: TeamMember }
 
@@ -26,6 +28,8 @@ export const ChangeMemberStatusAction = ({ member }: Props) => {
       status: newStatus
     })
   }
+
+  const roleChangeStatus = useRole('members', 'change-member-role', member.teamId)
 
   return ( 
     <Dialog>
@@ -45,10 +49,18 @@ export const ChangeMemberStatusAction = ({ member }: Props) => {
           <Label htmlFor="airplane-mode">User Status</Label>
         </div>
 
-        <DialogFooter>
-          <Button onClick={() => setModal(false)} variant='outline' size='sm'>Close</Button>
-          <DialogClose><Button onClick={confirmChange} disabled={changeStatusPending} variant='secondaryMain' size='sm'>Confirm</Button></DialogClose>
-        </DialogFooter>
+        {roleChangeStatus.roleLoading ? (
+          <OnlySpinner />
+        ): (
+          <React.Fragment>
+            {roleChangeStatus.access && (
+              <DialogFooter>
+                <Button onClick={() => setModal(false)} variant='outline' size='sm'>Close</Button>
+                <DialogClose><Button onClick={confirmChange} disabled={changeStatusPending} variant='secondaryMain' size='sm'>Confirm</Button></DialogClose>
+              </DialogFooter>
+            )}
+          </React.Fragment>
+        )}
 
       </DialogContent>
     </Dialog>

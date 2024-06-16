@@ -107,7 +107,6 @@ export async function createTask(projectId: number, values: z.infer<typeof Creat
       message: 'Task has been created!',
     }
   } catch (e) {
-    console.log(e)
     return {
       status: 500,
       message: 'Something went wrong!'
@@ -134,7 +133,6 @@ export async function updateTask(taskId: number, values: z.infer<typeof UpdatePr
       message: 'Task has been updated!'
     }
   } catch (e) {
-    console.log(e);
     return {
       status: 500,
       message: 'Something went wrong!'
@@ -154,7 +152,6 @@ export async function deleteTask(taskId: number) {
       message: 'Task has been deleted!'
     }
   } catch (e) {
-    console.log(e);
     return {
       status: 500,
       message: 'Something went wrong!'
@@ -273,7 +270,6 @@ export async function updateBoard(boardId: number, values: z.infer<typeof Update
       message: 'Board has been updated!'
     }
   } catch (e) {
-    console.log(e)
     return {
       status: 500,
       message: 'Something went wrong!'
@@ -299,7 +295,6 @@ export async function deleteBoard(boardId: number) {
     }
   }
 }
-
 
 export async function createTaskRelpy(teamId: number, taskId: number, data: z.infer<typeof CreateTaskReply>) {
   const task = await db.teamProjectTasks.findUnique({ 

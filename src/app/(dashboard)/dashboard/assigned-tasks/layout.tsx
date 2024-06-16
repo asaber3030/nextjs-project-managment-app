@@ -1,4 +1,4 @@
-import Link from "next/link";
+import React from "react";
 
 import db from "@/services/prisma";
 
@@ -6,27 +6,14 @@ import { userSelect } from "@/actions/config";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/services/auth";
 
-import { Check, Dot } from "lucide-react";
-import React from "react";
-import { cn } from "@/lib/utils";
-import { headers } from "next/headers";
-import { route } from "@/lib/route";
+import { Title } from "@/components/title";
 import { AssignedTasksSidebar } from "@/app/_components/app/assigned-tasks/sidebar";
+import { Team, TeamMember } from "@/types";
 
-type Props = {
-  children: React.ReactNode
-  params: {
-    teamId: string
-  }
-}
+type Props = { children: React.ReactNode }
 
-const AssignedTasksLayout = async ({ children, params }: Props) => {
+const AssignedTasksLayout = async ({ children }: Props) => {
 
-  const headersList = headers()
-  const fullURL = headersList.get('referer')
-
-  console.log(fullURL)
-  
   const current = await getServerSession(authOptions);
   const joinedTeams = await db.teamMember.findMany({
     where: { userId: current?.user.id },
@@ -35,31 +22,39 @@ const AssignedTasksLayout = async ({ children, params }: Props) => {
         include: { 
           members: { include: { user: { select: userSelect } } },
           teamProjects: {
-            include: { projectTasks: { include: { user: { select: userSelect } }, where: { userId: current?.user.id } } }
+            include: { 
+              projectTasks: { 
+                include: { user: { select: userSelect } }, 
+                where: { userId: current?.user.id } 
+              } 
+            }
           }
         }
       } 
-    },
+    }
   })
 
   return (
-    <div className="flex gap-4">
+    <div>
 
-      <section className='w-[450px] space-y-4 border-r pr-4'>
+      <Title label="Assigned Tasks" hasBottomBorder parentClassName="mb-4" />
 
-        <section>
-
-          <Link href='' className='font-bold mb-1 block text-blue-900 hover:underline w-fit'>Teams Tasks</Link>
-
-          <AssignedTasksSidebar joinedTeams={joinedTeams} />
+      <div className="flex gap-4">
+        
+        <section className='w-[550px] space-y-4 border-r pr-4'>
+          <AssignedTasksSidebar 
+            joinedTeams={joinedTeams as TeamMember[]}
+          />
         </section>
 
-      </section>
+        <section className='w-full'>
+          {children}
+        </section>
 
-      <section className='w-full'>
-        {children}
-      </section>
+      </div>
+
     </div>
+  
   );
 }
  

@@ -8,9 +8,11 @@ import { SearchBoardsByMembers } from "@/app/_components/app/projects/boards/sea
 import { EmptyData } from "@/components/empty-data"
 import { Title } from "@/components/title"
 
-import { TeamProjectBoard, TeamMember } from "@/types"
+import { TeamProjectBoard, TeamMember, Team } from "@/types"
 import { isMemberOfTeam } from "@/actions/check"
 import { notFound } from "next/navigation"
+import { EmptyState } from "@/components/empty-state"
+import { getCurrent, getTeam } from "@/actions/user-data"
 
 type Props = {
   params: { teamId: string }, 
@@ -24,6 +26,8 @@ const TeamIDBoards = async ({ params, searchParams }: Props) => {
   const teamId = +params.teamId
   const members = await getTeamMembers(teamId)
   const isMember = await isMemberOfTeam(+params.teamId)
+  const team = await getTeam(teamId) as unknown as Team
+  const current = await getCurrent()
 
   let teamBoards = await db.teamProjectBoards.findMany({
     where: { project: { teamId } },
@@ -37,17 +41,19 @@ const TeamIDBoards = async ({ params, searchParams }: Props) => {
       include: { owner: { select: userSelect } },
       orderBy: { id: 'desc' },
     })
-    console.log("With owner")
   }
 
-  if (!isMember) return notFound();
-  if (teamBoards.length === 0) return <EmptyData title="No Boards Created in this team." />
+  if (!team) return notFound();
+  if ((!isMember && current?.id != team.ownerId)) return notFound();
 
   return (
     <div>
       <Title label="All Team Boards" parentClassName="mb-4">
         <SearchBoardsByMembers members={members.members as TeamMember[]} />
       </Title>
+
+      {teamBoards.length === 0 && <EmptyState title="No Boards." />}
+
       <div className='grid grid-cols-1 xl:grid-cols-3 gap-2'>
         {teamBoards.map(board => (
           <OneBoard key={`team-boards-${board.id}`} board={board as TeamProjectBoard} />

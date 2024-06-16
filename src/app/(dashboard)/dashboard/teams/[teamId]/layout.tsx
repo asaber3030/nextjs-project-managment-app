@@ -22,6 +22,7 @@ const TeamLayout = async ({ children, params }: Props) => {
 
   const permission = new Permission(user?.id as number)
   await permission.fetchUser()
+  
   const teamPermissionsValues: TeamPermissionsType = {
     canCreateMoreTeamProjects: await permission.canCreateMoreTeamProjects(teamId),
     canAddMoreTeamMembers: await permission.canAddMoreTeamMembers(teamId),

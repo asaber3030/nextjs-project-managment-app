@@ -1,9 +1,9 @@
-import { RegisterSchema, UserDetailsSchema } from "@/schema/user";
 import { z } from "zod";
+import { apiURL } from "@/lib/constants";
+
+import { RegisterSchema } from "@/schema/user";
 
 import axios from 'axios'
-import { apiURL } from "@/lib/constants";
-import { getCurrent } from "./user-data";
 import db from "@/services/prisma";
 
 export async function registerAction(values: z.infer<typeof RegisterSchema>) {
@@ -11,6 +11,13 @@ export async function registerAction(values: z.infer<typeof RegisterSchema>) {
     return res.data
   }).catch((err) => {
     return err.response.data
+  })
+}
+
+export async function findUserByEmail(email: string) {
+  return await db.user.findUnique({
+    where: { email },
+    include: { plan: true }
   })
 }
 

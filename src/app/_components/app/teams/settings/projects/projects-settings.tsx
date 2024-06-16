@@ -20,7 +20,7 @@ export const TeamProjectsSettings = ({ team }: Props) => {
   return ( 
     <Card className='h-fit'>
       <CardHeader className='py-2 pt-6'>
-        <CardTitle>Team Projects Permissions</CardTitle>
+        <CardTitle>Team Projects</CardTitle>
         <CardDescription>Team Projects Permissions [Update, Delete, Create]</CardDescription>
       </CardHeader>
 

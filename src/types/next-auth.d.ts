@@ -3,6 +3,7 @@ import NextAuth from "next-auth"
 declare module "next-auth" {
 
   interface User {
+    _id: number
     id: number
     username: string
     displayName: string | null
@@ -17,6 +18,7 @@ declare module "next-auth" {
     allowUsingDirectCode: boolean
     private: boolean
     showDetails: boolean
+    provider: string
     bgCover: string | null
     planId: number
     plan: Plan
@@ -26,6 +28,7 @@ declare module "next-auth" {
   
   interface Session {
     user: {
+      _id: number
       id: number
       username: string
       displayName: string | null
@@ -43,10 +46,12 @@ declare module "next-auth" {
       planId: number
       plan: Plan
       bgCover: string | null
+      provider: string
       createdAt: Date
       updatedAt: Date
     }
     token: {
+      _id: number
       id: number
       username: string
       displayName: string | null
@@ -57,6 +62,7 @@ declare module "next-auth" {
       password?: string
       directCode: string
       photo: string
+      provider: string
       jobTitle: string
       allowUsingDirectCode: boolean
       private: boolean

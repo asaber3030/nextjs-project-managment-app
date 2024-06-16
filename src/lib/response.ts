@@ -8,7 +8,6 @@ export default function response(status: number, message: string, data?: unknown
   }, { status })
 }
 
-
 export function serverResponse(status: number, message: string, data?: any) {
   return {
     message,

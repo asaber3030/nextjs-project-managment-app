@@ -1,6 +1,6 @@
+import { useMemberInvitations } from "@/hooks/useMembers";
 
 import { LoadingButton } from "@/components/loading-button";
-import { useMemberInvitations } from "@/hooks/useMembers";
 import { Check } from "lucide-react";
 
 type Props = {
@@ -18,6 +18,6 @@ export const ApproveOneButton = ({ invitationId }: Props) => {
   }
 
   return ( 
-    <LoadingButton loading={approveIsPending} onClick={handleApprove} variant='outline'><Check className='size-4' /> Approve</LoadingButton>
+    <LoadingButton loading={approveIsPending} onClick={handleApprove} variant='success' className='px-4 h-8'><Check className='size-4' /> Approve</LoadingButton>
   );
 }

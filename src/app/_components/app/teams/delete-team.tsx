@@ -55,12 +55,12 @@ export const DeleteTeamView = ({ team }: Props) => {
 
         <Alert>
           <Trash className="h-4 w-4" stroke='red' />
-          <AlertTitle className='text-red-500 font-semibold'>Deleting Project</AlertTitle>
+          <AlertTitle className='text-red-500 font-medium'>Deleting Team - <b>{team.name}</b></AlertTitle>
           <AlertDescription>
             <ul className='mt-3 space-y-1 list-disc ml-5 text-gray-500'>
-              <li>Once you delete this project you won&pos;t be able to restore it again.</li>
-              <li>Deleting the project will cause to delete everthing related to this project</li>
-              <li>Deleting a project will erase its data such as tasks, boards, and calendars.</li>
+              <li>Once you delete this team you won&apos;t be able to restore it again.</li>
+              <li>Deleting the team will cause to delete everthing related to this project</li>
+              <li>Deleting a team will erase its data such as tasks, boards, and projects.</li>
             </ul>
             <div className='mt-4'>
               <div className='flex gap-1'>

@@ -39,7 +39,7 @@ export const ListTeamMembers = ({ team }: Props) => {
           {members?.length && members?.length === 0 ? (
             <EmptyState title="No Members have been added." />
           ): (
-            <section className='grid gap-2 xl:grid-cols-4 grid-cols-1'>
+            <section className='grid gap-2 xl:grid-cols-3 grid-cols-1'>
               {members?.map(member => (
                 <Member key={`member-idx-list-view-${member.id}`} member={member} />
               ))}

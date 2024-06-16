@@ -11,6 +11,7 @@ import { EmptyData } from "@/components/empty-data";
 import { OneTask } from "./task";
 import { ProjectHeaderTitle } from "../project-header-title";
 import { AddTaskAction } from "./add-task";
+import { EmptyState } from "@/components/empty-state";
 
 type Props = { project: TeamProject }
 
@@ -25,23 +26,23 @@ export const AllProjectTasks = ({ project }: Props) => {
 
       <section>
 
-        <h1 className='text-xl font-semibold mb-2'>Project Tasks</h1>
+        <h1 className='text-xl font-medium mb-2'>Project Tasks</h1>
 
         {isTasksLoading ? (
           <TaskSkeleton repeat={3} />
         ): (
           <React.Fragment>
             {tasks.length > 0 ? (
-              <div className='grid lg:grid-cols-2 md:grid-cols-2 xl:grid-cols-3 grid-cols-1 gap-2'>
+              <div className='grid lg:grid-cols-2 md:grid-cols-2 xl:grid-cols-2 grid-cols-1 gap-2'>
                 {tasks?.map(task => (
                   <OneTask task={task as any} key={`task-view-idx-${task.id}`} />
                 ))}
               </div>
             ): (
               <React.Fragment>
-                <EmptyData label="No tasks">
-                  <AddTaskAction className="p-1 px-4" project={project} projectId={project.id} />
-                </EmptyData>
+                <EmptyState title="No tasks" className='bg-white'>
+                  <AddTaskAction className="p-2 h-9 px-4" project={project} projectId={project.id} />
+                </EmptyState>
               </React.Fragment>
             )}
           </React.Fragment>

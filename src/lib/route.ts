@@ -3,10 +3,11 @@ import { Status } from "@prisma/client";
 export const route = {
   dashboard: () => `/dashboard`,
   teams: () => `/dashboard/teams`,
+  notifications: () => `/notifications`,
+  joinedTeams: () => `/dashboard/joined-teams`,
 
   userProfile: (username: string) => `/profile/${username}`,
   
-  notifications: () => `/notifications`,
   viewTeam: (teamId: number) => `/dashboard/teams/${teamId}`,
   viewTeamSettings: (teamId: number) => `/dashboard/teams/${teamId}/settings`,
   viewTeamMembers: (teamId: number) => `/dashboard/teams/${teamId}/members`,
@@ -19,12 +20,12 @@ export const route = {
   viewTeamProject: (teamId: number, projectId: number) => `/dashboard/teams/${teamId}/projects/${projectId}`,
   viewTasksOfTeamProject: (teamId: number, projectId: number) => `/dashboard/teams/${teamId}/projects/${projectId}/tasks`,
   viewProjectTask: (teamId: number, projectId: number, taskId: number) => `/dashboard/teams/${teamId}/projects/${projectId}/tasks/${taskId}`,
+  addTeamProject: (teamId: number) => `/dashboard/teams/${teamId}/projects/create`,
+  addTasksToTeamProject: (teamId: number, projectId: number) => `/dashboard/teams/${teamId}/projects/${projectId}/tasks/add`,
   deleteTeam: (teamId: number) => `/dashboard/teams/${teamId}/delete`,
   viewTeamMailSystem: (teamId: number) => `/dashboard/teams/${teamId}/mail`,
-  addTeamProject: (teamId: number) => `/dashboard/teams/${teamId}/projects/create`,
   updateTeamProject: (teamId: number, projectId: number) => `/dashboard/teams/${teamId}/projects/${projectId}/update`,
   deleteTeamProject: (teamId: number, projectId: number) => `/dashboard/teams/${teamId}/projects/${projectId}/delete`,
-  addTasksToTeamProject: (teamId: number, projectId: number) => `/dashboard/teams/${teamId}/projects/${projectId}/tasks/add`,
 
   myInvitations: (status: Status = Status.Pending) => status === Status.Pending ? `/dashboard/invitations` : `/dashboard/invitations/${status.toLowerCase()}`,
 
@@ -38,14 +39,8 @@ export const route = {
   viewPersonalTask: (taskId: number) => `/dashboard/tasks/${taskId}`,
   updatePersonalTask: (taskId: number) => `/dashboard/tasks/${taskId}/update`,
   deletePersonalTask: (taskId: number) => `/dashboard/tasks/${taskId}/delete`,
-  createPersonalTask: () => `/dashboard/tasks/create`,
 
-  account: () => `/account`,
-  accountTeams: () => `/account/teams`,
-  accountTasks: () => `/account/tasks`,
-  accountProjects: () => `/account/projects`,
-  accountSettings: () => `/account/settings`,
-  accountPictures: () => `/account/picture`,
+  account: (item?: string) => item ? `/account/${item}` : `/account`,
 
   assignedTasks: () => `/dashboard/assigned-tasks`,
   assignedTeamTasks: (teamId: number) => `/dashboard/assigned-tasks/teams/${teamId}`,

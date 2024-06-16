@@ -1,6 +1,7 @@
 "use server";
 
 import db from "@/services/prisma";
+import bcrypt from 'bcrypt'
 
 import { PersonalTaskStatus, Status, Team } from "@prisma/client";
 import { TeamInvite, User } from "@/types";
@@ -14,7 +15,6 @@ import { userSelect } from "./config";
 import { z } from "zod";
 import { ChangeDirectCodeSchema, ChangePasswordSchema, PersonalProjectSchema, PersonalTaskSchema } from "@/schema";
 import { AccountPrivacySchema, UserDetailsSchema } from "@/schema/user";
-import bcrypt from 'bcrypt'
 
 export async function testProjects() {
   return await db.project.findMany()
@@ -23,6 +23,12 @@ export async function testProjects() {
 export async function getCurrent() {
   const session = await getServerSession(authOptions)
   return session?.user
+}
+
+export async function getCurrentPlan() {
+  const current = await getCurrent()
+  if (!current) return await db.plan.findUnique({ where: { id: 1 } })
+  return await db.plan.findUnique({ where: { id: current.planId } })
 }
 
 export async function notify(title: string, url: string, userId: number, icon: string = notificationIcon()) {
@@ -48,9 +54,8 @@ export async function getMyInvitationsToTeams(status: Status = Status.Pending) {
       where: { userId: session?.user.id, status },
       include: { team: { include: { owner: { select: userSelect } } } }
     })
-    return invitations as TeamInvite[]
+    return invitations as unknown as TeamInvite[]
   } catch (e) {
-    console.log(e)
     return []
   }
 }
@@ -61,11 +66,16 @@ export async function getMyJoinedTeams() {
     const userId = current?.id
     const teams = await db.teamMember.findMany({
       where: { userId },
-      include: { team: { include: { members: { include: { user: { select: userSelect } } } } } }
+      include: { 
+        team: {
+          include: { 
+            members: { include: { user: { select: userSelect } } } 
+          } 
+        } 
+      }
     })
     return teams 
   } catch (e) {
-    console.log(e)
   }
   return []
 }
@@ -88,10 +98,35 @@ export async function getUserCounts() {
 
 }
 
+
+export async function getPersonalTasksStats() {
+  const user = await getCurrent()
+  const ownerId = user?.id
+
+  if (!ownerId) return { pending: 0, todo: 0, done: 0 }
+
+  const pending = await db.task.count({
+    where: { status: PersonalTaskStatus.Pending, ownerId }
+  })
+  const todo = await db.task.count({
+    where: { status: PersonalTaskStatus.Todo, ownerId }
+  })
+  const done = await db.task.count({
+    where: { status: PersonalTaskStatus.Done, ownerId }
+  })
+
+  return {
+    pending,
+    todo,
+    done
+  }
+
+}
+
 export async function getNotifications() {
   const current = await getCurrent()
   const notifications = await db.notification.findMany({ 
-    where: { userId: current?.id }, 
+    where: { user:  { id: current?.id } }, 
     orderBy: { id: 'desc' } 
   })
   return notifications
@@ -333,7 +368,7 @@ export async function deleteNotification(notificationId: number) {
 }
 
 // Personal Data
-export async function getPersonalProjects(query: string = '', orderByColumn: string = 'id', orderType: 'asc' | 'desc' = 'desc') {
+export async function getPersonalProjects(query: string = '', orderByColumn: string = 'id', orderType: 'asc' | 'desc' = 'desc', ownerId?: number) {
   try {
     const current = await getCurrent();
     const personalProjects = await db.project.findMany({
@@ -342,7 +377,7 @@ export async function getPersonalProjects(query: string = '', orderByColumn: str
           { name: { contains: query } }
         ],
         AND: [
-          { ownerId: current?.id }
+          { ownerId: ownerId ? ownerId : current?.id }
         ]
       },
       orderBy: { [orderByColumn]: orderType },
@@ -598,7 +633,6 @@ export async function updateDetails(data: z.infer<typeof UserDetailsSchema>) {
       user: update
     }
   } catch (error) {
-    console.log(error)
     return {
       message: 'something went wrong',
       status: 500,
@@ -706,7 +740,6 @@ export async function changeAccountPrivacy(data: z.infer<typeof AccountPrivacySc
       user: update
     }
   } catch (error) {
-    console.log(error)
     return {
       message: 'Something went wrong',
       status: 500,
@@ -728,7 +761,6 @@ export async function changeProfilePicture(url: string) {
       user: update
     }
   } catch (error) {
-    console.log(error)
     return {
       message: 'Something went wrong',
       status: 500,
@@ -750,11 +782,33 @@ export async function changeCover(url: string) {
       user: update
     }
   } catch (error) {
-    console.log(error)
     return {
       message: 'Something went wrong',
       status: 500,
       error
     }
   }
+}
+
+export async function subscriptions() {
+  
+  const current = await getServerSession(authOptions)
+  const allSubscriptions = await db.subscription.findMany({
+    where: { userId: current?.user.id },
+    orderBy: { id: 'desc' },
+    include: { plan: true }
+  })
+
+  return allSubscriptions
+}
+
+export async function lastSubscription() {
+  const current = await getServerSession(authOptions)
+  const last = await db.subscription.findFirst({
+    where: { userId: current?.user.id },
+    orderBy: { id: 'desc' },
+    include: { plan: true }
+  })
+
+  return last
 }

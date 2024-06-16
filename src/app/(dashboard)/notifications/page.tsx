@@ -10,9 +10,7 @@ import { redirect } from "next/navigation";
 const NotificationsPage = async () => {
 
   const session = await getServerSession(authOptions)
-  const userId = Number(session?.user.id)
-
-  const { notifications } = await getNotifications(userId)
+  const notifications = await getNotifications()
 
   if (!session?.user) return redirect('/login')
 

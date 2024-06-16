@@ -1,17 +1,18 @@
 "use client";
 
-import { TeamProjectTask } from "@/types";
-
-import { UpdateTaskAction } from "./update-task";
-import { DeleteTaskAction } from "./delete-task";
-import { SendWarningTaskAction } from "./send-warning-task";
-import { AssignTaskAction } from "./assign-task";
 import { useUser } from "@/hooks";
 import { useRole } from "@/hooks/useRoles";
 import { useParams } from "next/navigation";
 import { useTeam } from "@/hooks/useTeams";
-import { Render } from "@/components/render";
+import { useProject } from "@/hooks/useProjects";
+
+import { TeamProjectTask } from "@/types";
+
 import { ButtonSkeleton } from "@/app/_components/skeleton/button-skeleton";
+import { Render } from "@/components/render";
+import { UpdateTaskAction } from "./update-task";
+import { DeleteTaskAction } from "./delete-task";
+import { AssignTaskAction } from "./assign-task";
 
 type Props = { 
   task: TeamProjectTask
@@ -19,16 +20,14 @@ type Props = {
 
 export const TaskActions = ({ task }: Props) => {
 
-  const { teamId: stringId }: { teamId: string } = useParams()
-
-  const teamId = Number(stringId)
   const user = useUser()
 
-  const roleUpdateTask = useRole('tasks', 'update-tasks', teamId)
-  const roleDeleteTask = useRole('tasks', 'delete-tasks', teamId)
-  const roleAssignTask = useRole('tasks', 'assign-tasks', teamId)
+  const { project } = useProject(task.projectId);
+  const { team } = useTeam(project?.teamId)
 
-  const { team } = useTeam(teamId)
+  const roleUpdateTask = useRole('tasks', 'update-tasks', team?.id as number)
+  const roleDeleteTask = useRole('tasks', 'delete-tasks', team?.id as number)
+  const roleAssignTask = useRole('tasks', 'assign-tasks', team?.id as number)
 
   return ( 
     <div className='flex gap-0.5'>

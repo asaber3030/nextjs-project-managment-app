@@ -2,12 +2,12 @@ import React from "react";
 
 import { Footer } from "../_components/app/footer";
 
-const UnauthenicatedLayout = ({ children }: { children: React.ReactNode }) => {
+const UnauthenicatedLayout = async ({ children }: { children: React.ReactNode }) => {
   return (
-    <React.Fragment>
+    <div className='flex h-[100vh] flex-col justify-between'>
       {children}
       <Footer />
-    </React.Fragment>
+    </div>
   );
 }
  

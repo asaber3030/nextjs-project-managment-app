@@ -7,6 +7,8 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSepar
 import { SingleNotification } from "@/app/_components/user/notification";
 
 import { NotificationsContext } from "@/providers/notifications";
+import { EmptyState } from "@/components/empty-state";
+import React from "react";
 
 
 export const NotificationsDropdown = () => {
@@ -16,12 +18,18 @@ export const NotificationsDropdown = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className='text-white p-0.5 py-0 px-2 hover:bg-secondaryMain transition-all rounded-md'><Bell className='size-4' /></DropdownMenuTrigger>
-      <DropdownMenuContent className='px-4 w-[600px] max-h-[600px] overflow-y-auto'>
+      <DropdownMenuContent className='w-[600px] max-h-[600px] overflow-y-auto'>
         <DropdownMenuLabel>Notifications</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        {notifications?.map((notitfication) => (
-          <SingleNotification iconClassName="size-12" titleClassName='text-sm' key={`dropdown-notification-${notitfication.id}`} notification={notitfication} />
-        ))}
+        {notifications?.length === 0 ? (
+          <EmptyState title="No notifications." />
+        ): (
+          <React.Fragment>
+            {notifications?.map((notitfication) => (
+              <SingleNotification iconClassName="size-12" titleClassName='text-sm' key={`dropdown-notification-${notitfication.id}`} notification={notitfication} />
+            ))}
+          </React.Fragment>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

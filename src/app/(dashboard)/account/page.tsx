@@ -1,8 +1,9 @@
-import { testProjects } from "@/actions/user-data";
 import { AccountHeaderMain } from "@/app/_components/account/title-section";
 import { UpdateAccountDetails } from "@/app/_components/account/update-details";
-import { authOptions } from "@/services/auth";
+
 import { User } from "@/types";
+
+import { authOptions } from "@/services/auth";
 import { getServerSession } from "next-auth";
 
 

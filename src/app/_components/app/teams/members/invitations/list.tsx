@@ -28,7 +28,7 @@ export const TeamInvitations = ({ team }: Props) => {
       ): invitations?.length === 0 ? (
         <EmptyState title='No Pending Invitations' imageSrc="/defaults/pending.svg" />
       ): (
-        <section className='grid xl:grid-cols-4 gap-2'>
+        <section className='grid xl:grid-cols-3 gap-2'>
           {invitations?.map((invitation) => (
             <Invitation 
               key={`invitation-idx-key-${invitation.id}`} 

@@ -101,7 +101,6 @@ export function useTeam(teamId: number) {
     mutationFn: ({ teamId, values }: { teamId: number, values: z.infer<typeof CreateTeamSchema> }) => updateTeam(teamId, values),
     onSuccess: (data) => {
       toast.message(data.message)
-      console.log(data)
       queryClient.invalidateQueries({ queryKey: QueryKeys.userTeams() })
     }
   })
@@ -188,7 +187,6 @@ export function usePermissionActions() {
   const updatePermissions = useMutation({
     mutationFn: ({ permissionId, teamId, whoCanDo, teamPermissions }: { permissionId: number, teamId: number, whoCanDo: TeamRoles[], teamPermissions: TeamPermission[] }) => updateTeamPermission(permissionId, teamId, whoCanDo, teamPermissions),
     onSuccess: (data) => {
-      console.log({ updateData: data })
       toast.message("Updated")
     }
   })

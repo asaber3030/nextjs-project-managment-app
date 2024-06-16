@@ -54,7 +54,7 @@ export const ViewAllTasks = ({ project }: Props) => {
     <section>
 
       <section className='flex justify-between pb-2 border-b mb-2'>
-        <h1 className='text-xl font-semibold'><b className='text-main capitalize'>{project.name}</b> - Project Tasks</h1>
+        <h1 className='text-xl font-medium'><b className='text-main capitalize'>{project.name}</b> - Project Tasks</h1>
         <AddTaskAction project={project} projectId={project.id} className='p-1 px-4' />
       </section>
 
@@ -111,7 +111,7 @@ export const ViewAllTasks = ({ project }: Props) => {
       ): (
         <React.Fragment>
           {tasks?.length > 0 ? (
-            <div className='grid lg:grid-cols-2 md:grid-cols-2 xl:grid-cols-3 grid-cols-1 gap-2'>
+            <div className='grid lg:grid-cols-2 md:grid-cols-2 xl:grid-cols-2 grid-cols-1 gap-2'>
               {tasks?.map(task => (
                 <OneTask task={task as any} key={`task-view-idx-${task.id}`} />
               ))}

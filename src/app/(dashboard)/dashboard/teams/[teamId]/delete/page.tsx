@@ -1,5 +1,5 @@
 import { isMemberOfTeam } from "@/actions/check"
-import { getTeam } from "@/actions/user-data"
+import { getCurrent, getTeam } from "@/actions/user-data"
 import { notFound } from "next/navigation"
 
 import { DeleteTeamView } from "@/app/_components/app/teams/delete-team"
@@ -11,11 +11,14 @@ type Props = {
 
 const DeleteTeamPage = async ({ params }: Props) => {
 
-  const teamId = Number(params.teamId)
-  const team = await getTeam(teamId)
+  const teamId = +params.teamId
+  const team = await getTeam(teamId) as unknown as Team
+  const isMember = await isMemberOfTeam(teamId)
+  const current = await getCurrent()
 
-  const isMember = await isMemberOfTeam(+params.teamId)
-  if (!isMember) return notFound();
+  if (!team) return notFound();
+  if ((!isMember && current?.id != team.ownerId)) return notFound();
+  
 
   return (
     <DeleteTeamView team={team as unknown as Team} />

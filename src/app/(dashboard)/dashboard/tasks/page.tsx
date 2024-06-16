@@ -20,7 +20,7 @@ const PersonalTasksPage = async ({ searchParams }: Props) => {
     searchParams.query ?? '', 
     searchParams.orderBy ?? 'id', 
     searchParams.orderType ?? 'desc'
-  ) as Task[]
+  ) as unknown as Task[]
 
   return ( 
     <ListPersonalTasks tasks={tasks} />

@@ -30,28 +30,28 @@ export const ProjectActionsButtons = ({ className, showAddTask = true, showAddBo
   const roleDeleteProject = useRole('projects', 'delete-projects', project.teamId)
 
   return ( 
-    <div className={cn('flex gap-1 flex-wrap mt-2', className)}>
+    <div className={cn('flex gap-1 flex-wrap mt-4', className)}>
       
-      <Link href={route.viewTasksOfTeamProject(project.teamId, project.id)}><Button variant='outline'>View Tasks</Button></Link>
+      <Link href={route.viewTasksOfTeamProject(project.teamId, project.id)}><Button className='text-xs h-7' variant='outline'>View Tasks</Button></Link>
       
       <Render 
         access={roleUpdateProject.access || user?.id === project?.team?.ownerId}
         fetched={roleUpdateProject.roleFetched}
         loading={roleUpdateProject.roleLoading}
-        render={<Link href={route.updateTeamProject(project.teamId, project.id)}><Button variant='outline'>Update</Button></Link>}
-        renderSkeleton={<ButtonSkeleton />}
+        render={<Link href={route.updateTeamProject(project.teamId, project.id)}><Button className='text-xs h-7' variant='outline'>Update</Button></Link>}
+        renderSkeleton={<ButtonSkeleton className='h-7' />}
       />
 
       <Render 
         access={roleUpdateProject.access || user?.id === project?.team?.ownerId}
         fetched={roleDeleteProject.roleFetched}
         loading={roleDeleteProject.roleLoading}
-        render={<Link href={route.deleteTeamProject(project.teamId, project.id)}><Button variant='outline'>Delete</Button></Link>}
-        renderSkeleton={<ButtonSkeleton />}
+        render={<Link href={route.deleteTeamProject(project.teamId, project.id)}><Button className='text-xs h-7' variant='outline'>Delete</Button></Link>}
+        renderSkeleton={<ButtonSkeleton className='h-7' />}
       />  
 
       {showAddTask && (
-        <AddTaskAction className='w-fit' project={project} projectId={project.id} />
+        <AddTaskAction className='w-fit text-xs' project={project} projectId={project.id} />
       )}
       {showAddBoard && (
         <AddBoardAction className='w-fit' project={project} />

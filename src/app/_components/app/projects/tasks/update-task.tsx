@@ -62,7 +62,6 @@ export const UpdateTaskAction = ({ task, label, className, iconClassName }: Prop
     mutationFn: () => updateTask(task.id, { ...form.getValues(), finishAt: date as any }),
     onSuccess: (data) => {
       toast.message(data.message)
-      queryClient.invalidateQueries({ queryKey: QueryKeys.teamProjectTasks(teamId, projectId) })
     }
   })
 

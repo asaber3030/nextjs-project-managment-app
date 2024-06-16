@@ -5,6 +5,9 @@ import { TeamMember } from "@/types";
 
 import { useMembers } from "@/hooks/useMembers";
 import { useState } from "react";
+import { useRole } from "@/hooks/useRoles";
+import React from "react";
+import { OnlySpinner } from "@/components/loading-spinner";
 
 type Props = { member: TeamMember }
 
@@ -20,6 +23,8 @@ export const RemoveMemberAction = ({ member }: Props) => {
       membershipId: member?.id
     })
   }
+  
+  const roleRemoveMembers = useRole('members', 'delete-members', member.teamId)
 
   return ( 
     <Dialog open={modal} onOpenChange={setModal}>
@@ -34,10 +39,20 @@ export const RemoveMemberAction = ({ member }: Props) => {
             and remove his data from our team.
           </DialogDescription>
         </DialogHeader>
-        <DialogFooter>
-          <Button onClick={() => setModal(false)} variant='outline' size='sm'>Close</Button>
-          <DialogClose><Button onClick={confirmDeletion} disabled={deletionPending} variant='destructive' size='sm'>Confirm</Button></DialogClose>
-        </DialogFooter>
+        
+        {roleRemoveMembers.roleLoading ? (
+          <OnlySpinner />
+        ): (
+          <React.Fragment>
+            {roleRemoveMembers.access && (
+              <DialogFooter>
+              <Button onClick={() => setModal(false)} variant='outline' size='sm'>Close</Button>
+              <DialogClose><Button onClick={confirmDeletion} disabled={deletionPending} variant='destructive' size='sm'>Confirm</Button></DialogClose>
+            </DialogFooter>
+            )}
+          </React.Fragment>
+        )}
+        
       </DialogContent>
     </Dialog>
   );

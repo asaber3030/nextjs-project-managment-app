@@ -40,7 +40,7 @@ import { QueryKeys } from "@/lib/query-keys";
 import { NoPermissionAlert } from '@/components/no-permissions-alert';
 
 type Props = { 
-  projectId: number,
+  projectId?: number,
   project: TeamProject,
   className?: string
 }
@@ -110,7 +110,7 @@ export const AddTaskAction = ({ className, project }: Props) => {
   return (
     <Dialog open={modal} onOpenChange={setModal}>
       
-      <DialogTrigger className={cn(className, 'rounded-sm text-blackborder-input font-medium text-sm bg-background p-0.5 px-4 hover:bg-accent border hover:text-accent-foreground')}>Add Task</DialogTrigger>
+      <DialogTrigger className={cn(className, 'transition-all rounded-sm text-blackborder-input font-medium text-sm bg-background p-0.5 px-4 hover:bg-accent border hover:text-accent-foreground')}>Add Task</DialogTrigger>
 
       <DialogContent className='min-w-[60%] max-h-[80%] overflow-auto'>
 
@@ -244,7 +244,7 @@ export const AddTaskAction = ({ className, project }: Props) => {
             />
 
             <ScrollArea>
-              <h1 className="text-lg font-bold mb-2">Assign to Members</h1>
+              <h1 className="text-lg font-semibold mb-2">Assign to Members</h1>
               <div className='space-y-1'>
                 {members?.map(member => (
                   <div
@@ -254,7 +254,7 @@ export const AddTaskAction = ({ className, project }: Props) => {
                     <div className='flex items-centers gap-2'>
                       <UserHoverCard user={member.user as User} date={member.joinedIn} />
                       <div>
-                        <h2 className='font-semibold'>{member.user.name}</h2>
+                        <h2 className='font-medium'>{member.user.name}</h2>
                         <p className='text-xs'>{member.user.jobTitle}</p>
                       </div>
                     </div>
@@ -270,7 +270,7 @@ export const AddTaskAction = ({ className, project }: Props) => {
               <React.Fragment>
                 {permission.canCreateMoreTasks ? (
                   <React.Fragment>
-                    {(roleAddTask.access || project.team.ownerId === user?.id) ? (
+                    {(roleAddTask.access || project?.team?.ownerId === user?.id) ? (
                       <DialogFooter>
                         <LoadingButton type='submit' loading={createMutation.isPending} className='px-4 h-9 text-black' variant='outline'>Create Task</LoadingButton>
                       </DialogFooter>   

@@ -5,7 +5,6 @@ import { TeamProject } from "@/types";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
-import { route } from "@/lib/route";
 
 type Props = {
   projects: TeamProject[]
@@ -36,10 +35,6 @@ export const FilterTeamProjects = ({ projects }: Props) => {
     if (selectedProject) queryParam += `&projectId=${selectedProject}`
     router.push(`?${queryParam}`)
   }
-
-
-  console.log({ selectedProject, selectedStatus })
-
   return ( 
     <div className='flex gap-1'>
       <Select defaultValue={selectedProject} onValueChange={onProjectChange}>

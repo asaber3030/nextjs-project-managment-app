@@ -14,7 +14,7 @@ export const OneStat = ({ number, title, icon: Icon }: Props) => {
         <Icon className="text-yellow-500 size-6" />
       </div>
       <div>
-        <p className='text-2xl font-bold'>{formatNumber(number)}+</p>
+        <p className='text-2xl font-semibold'>{formatNumber(number)}+</p>
         <h3 className='text-gray-500'>{title}</h3>
       </div>
     </section>

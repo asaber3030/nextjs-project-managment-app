@@ -13,7 +13,11 @@ import { TeamBoardsSettings } from "./boards/boards-settings";
 import { TeamProjectsSettings } from "./projects/projects-settings";
 import { TeamMembersSettings } from "./members/members-settings";
 import { TeamsSettings } from "./teams/teams-settings";
-import { SettingsSkeleton } from "@/app/_components/skeleton/settings-skeleton";
+import { LoadingSpinner } from "@/components/loading-spinner";
+
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { ClassValue } from "clsx";
+import { NoPermissionAlert } from "@/components/no-permissions-alert";
 
 type Props = {
   team: Team
@@ -24,20 +28,54 @@ export const TeamSettings = ({ team }: Props) => {
   const user = useUser()
   const roleTeamSettings = useRole('teams', 'update-team-roles', team.id)
 
+  const tabTriggerClassName: ClassValue = 'bg-white data-[state=active]:text-white data-[state=active]:bg-main'
+
   return ( 
     <React.Fragment>
-      {(user?.id == team.ownerId || roleTeamSettings.access) && ( 
+      {roleTeamSettings.roleLoading ? (
+        <LoadingSpinner />
+      ): (
         <React.Fragment>
-         <Title label="Team Settings" parentClassName='mb-4' hasBottomBorder />
-          <div className='grid grid-cols-1 xl:grid-cols-3 gap-2'>
-            <TeamsSettings team={team} />
-            <TeamTasksSettings team={team} />
-            <TeamProjectsSettings team={team} />
-            <TeamBoardsSettings team={team} />
-            <TeamMembersSettings team={team} />
-          </div>
+          {(user?.id == team.ownerId || roleTeamSettings.access) ? ( 
+            <React.Fragment>
+
+              <Tabs defaultValue="teamTasksSettings" className='w-full bg-transparent p-0'>
+      
+                <TabsList className='w-full'>
+                  <TabsTrigger className={`w-full ${tabTriggerClassName}`} value="teamTasksSettings">Tasks permissions</TabsTrigger>
+                  <TabsTrigger className={`w-full ${tabTriggerClassName}`} value="teamProjectsSettings">Projects permissions</TabsTrigger>
+                  <TabsTrigger className={`w-full ${tabTriggerClassName}`} value="teamsSettings">Team Permissions</TabsTrigger>
+                  <TabsTrigger className={`w-full ${tabTriggerClassName}`} value="teamBoardsSettings">Boards permissions</TabsTrigger>
+                  <TabsTrigger className={`w-full ${tabTriggerClassName}`} value="teamMembersSettings">Members permissions</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="teamTasksSettings">
+                  <TeamTasksSettings team={team} />
+                </TabsContent>
+
+                <TabsContent value="teamProjectsSettings">
+                  <TeamsSettings team={team} />
+                </TabsContent>
+
+                <TabsContent value="teamsSettings">
+                  <TeamProjectsSettings team={team} />
+                </TabsContent>
+
+                <TabsContent value="teamBoardsSettings">
+                  <TeamBoardsSettings team={team} />
+                </TabsContent>
+
+                <TabsContent value="teamMembersSettings">
+                  <TeamMembersSettings team={team} />
+                </TabsContent>
+              </Tabs>
+            </React.Fragment>
+          ): (
+            <NoPermissionAlert actionName="Update team roles & permissions." />
+          )}
         </React.Fragment>
       )}
+      
     </React.Fragment>
   );
 }

@@ -1,13 +1,14 @@
-import { Cog, User, Users, Gamepad, Check, CheckCheck, Folder, Image as ImageIcon, Home, ListChecks, FolderOpen, Building, Smile, UserPlus, Facebook, Linkedin, Github } from "lucide-react";
+import { Cog, User, Users, Gamepad, Check, CheckCheck, Folder, Image as ImageIcon, Home, ListChecks, FolderOpen, Building, Smile, UserPlus, Facebook, Linkedin, Github, DollarSign } from "lucide-react";
 import { route } from "./route";
 
 export const accountSidebarURLs = [
-  { label: 'Account', icon: <User className='size-5' />, url: '/account' },
-  { label: 'Settings', icon: <Cog className='size-5' />, url: '/account/settings' },
-  { label: 'Picture', icon: <ImageIcon className='size-5' />, url: '/account/picture' },
-  { label: 'Teams', icon: <Users className='size-5' />, url: '/account/teams' },
-  { label: 'Tasks', icon: <CheckCheck className='size-5' />, url: '/account/tasks' },
-  { label: 'Projects', icon: <Folder className='size-5' />, url: '/account/projects' },
+  { label: 'Account', icon: <User className='size-5' />, url: route.account() },
+  { label: 'Settings', icon: <Cog className='size-5' />, url: route.account('settings') },
+  { label: 'Picture', icon: <ImageIcon className='size-5' />, url: route.account('picture') },
+  { label: 'Teams', icon: <Users className='size-5' />, url: route.account('teams') },
+  { label: 'Tasks', icon: <CheckCheck className='size-5' />, url: route.account('tasks') },
+  { label: 'Projects', icon: <Folder className='size-5' />, url: route.account('projects') },
+  { label: 'Subscriptions', icon: <DollarSign className='size-5' />, url: route.account('subscriptions') },
 ]
 
 export const servicesList = [
@@ -101,4 +102,15 @@ export const socialMedia = [
     icon: Github,
     url: 'https://github.com/asaber3030'
   },
+]
+
+export const avatarsPhotos = [
+  '/avatars/01.svg',
+  '/avatars/02.svg',
+  '/avatars/03.svg',
+  '/avatars/04.svg',
+  '/avatars/05.svg',
+  '/avatars/06.svg',
+  '/avatars/07.svg',
+  '/avatars/08.svg',
 ]

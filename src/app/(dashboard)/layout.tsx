@@ -1,14 +1,18 @@
 import React from "react";
-import UserSidebar from "../_components/app/sidebar/sidebar";
 
+
+import db from "@/services/prisma";
+
+import { Permission } from "@/services/permissions";
 import { GlobalPermissionsProivder } from "@/providers/global-permissions";
+import { GlobalPermissionsType, Subscription } from "@/types";
+
+import { UserSidebar } from "../_components/app/sidebar/sidebar";
 
 import { getServerSession } from "next-auth";
+import { getPersonalTasksStats, lastSubscription } from "@/actions/user-data";
 import { authOptions } from "@/services/auth";
-import { Permission } from "@/services/permissions";
-import { GlobalPermissionsType, Notification } from "@/types";
-import { getNotifications } from "@/actions/user-data";
-import { NotificationsProvider } from "@/providers/notifications";
+import { Status } from "@prisma/client";
 
 const AuthenticatedLayout = async ({ children }: { children: React.ReactNode }) => {
 
@@ -29,12 +33,19 @@ const AuthenticatedLayout = async ({ children }: { children: React.ReactNode }) 
     canCreateMoreTeams: await permission.canCreateMoreTeams()
   }
 
+  const lastSub = await lastSubscription() as Subscription
+
+  const countTasks = await db.teamProjectTasks.count({
+    where: { userId: user?.id, status: Status.Pending }
+  })
+
+  const stats = await getPersonalTasksStats()
 
   return (
     <GlobalPermissionsProivder value={globalPermissionsValues}>
       <div className='flex'>
-        <UserSidebar />
-        <div className='xl:pl-[372px] pr-[22px] py-[22px] w-full px-[22px]'>
+        <UserSidebar countTasks={countTasks} subscription={lastSub} stats={stats} />
+        <div className='xl:pl-[362px] pr-[22px] py-[22px] w-full px-[22px]'>
           {children}
         </div>
       </div>

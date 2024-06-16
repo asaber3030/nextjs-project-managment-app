@@ -13,3 +13,10 @@ export async function getPlans() {
     throw error
   }
 }
+
+export async function getPlanById(id: number) {
+  const plan = await db.plan.findUnique({
+    where: { id },
+  })
+  return plan
+}

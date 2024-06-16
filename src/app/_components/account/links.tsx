@@ -12,7 +12,7 @@ export const AccountLinks = () => {
   const pathname = usePathname()
 
   return ( 
-    <ul className='flex'>
+    <ul className='flex flex-wrap xl:justify-start justify-center'>
       {accountSidebarURLs.map((item, idx) => (
         <li key={`account-sidebar-item-${idx}`}>
           <Link 

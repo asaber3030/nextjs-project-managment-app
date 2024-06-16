@@ -1,11 +1,12 @@
-import { QueryKeys } from "@/lib/query-keys";
-import { TeamMember } from "@/types";
-
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
 import { toast } from "sonner";
 import { approveAllTeamInvitation, approveOneTeamInvitation, changeMemberRole, changeMemberStatus, getTeamMembers, rejectAllTeamInvitation, rejectOneTeamInvitation, removeMember } from "@/actions/team";
+import { getMemberBoards, getMemberTasks } from "@/actions/user-data"
+;
+import { QueryKeys } from "@/lib/query-keys";
+import { TeamMember } from "@/types";
 import { Status, TeamMemberStatus, TeamRoles } from "@prisma/client";
-import { getMemberBoards, getMemberTasks } from "@/actions/user-data";
 
 export function useMembers(teamId: number) {
 
@@ -61,17 +62,6 @@ export function useMembers(teamId: number) {
     changeRoleMutate,
     changeRolePending,
   }
-
-}
-
-export function useMember(teamId: number, memberId: number) {
-  
-  const queryClient = useQueryClient()
-
-  const queryTasks = useQuery({
-    queryKey: QueryKeys.teamMemberTasks(teamId, memberId),
-    queryFn: async () => {}
-  })
 
 }
 

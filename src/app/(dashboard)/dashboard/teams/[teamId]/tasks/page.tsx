@@ -13,6 +13,9 @@ import { OneTask } from "@/app/_components/app/projects/tasks/task"
 import { SearchTeamTasks } from "@/app/_components/app/projects/tasks/search-team-tasks"
 import { notFound } from "next/navigation"
 import { isMemberOfTeam } from "@/actions/check"
+import { EmptyState } from "@/components/empty-state"
+import { AddTaskAction } from "@/app/_components/app/projects/tasks/add-task"
+import { getCurrent, getTeam } from "@/actions/user-data"
 
 type Props = {
   params: { teamId: string }, 
@@ -55,16 +58,20 @@ const TeamIDTasks = async ({ params, searchParams }: Props) => {
     include: { user: { select: userSelect }, project: true }
   })
 
-  if (!isMember) return notFound();
- 
+  const current = await getCurrent()
+  const team = await getTeam(+teamId)
+
+  if (!team || (!isMember && current?.id != team.ownerId)) return notFound();
+
   return (
     <div>
-      <Title label="Team Tasks" parentClassName="mb-4">
-        <SearchTeamTasks projects={data} members={members as TeamMember[]} />
-      </Title>
+      
+      <Title disableIcon label="Team Tasks" />
+
+      <SearchTeamTasks projects={data} members={members as TeamMember[]} />
 
       {/* Empty State */}
-      {tasks.length === 0 && (<EmptyData title="No Tasks" />)}
+      {tasks.length === 0 && (<EmptyState title="No Tasks" />)}
 
       {/* Display Tasks */}
       <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-2'>

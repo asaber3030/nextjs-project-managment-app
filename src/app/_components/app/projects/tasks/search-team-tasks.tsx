@@ -34,12 +34,12 @@ export const SearchTeamTasks = ({ projects, members }: Props) => {
 
   const userIdParam = searchParams.get('userId')
   const projectIdParam = searchParams.get('projectId')
-  const finishAtParam = format(searchParams.get('finishAt') || moment.now(), 'yyyy-MM-dd') as unknown as Date
+  const finishAtParam = searchParams.get('finishAt') && format(searchParams.get('finishAt')!, 'yyyy-MM-dd') as unknown as Date
   const statusParam = searchParams.get('status')
 
   const [userId, setUserId] = useState(userIdParam ?? '')
   const [projectId, setProjectId] = useState(projectIdParam ?? '')
-  const [finishAt, setFinishAt] = useState<Date>(finishAtParam)
+  const [finishAt, setFinishAt] = useState(finishAtParam)
   const [status, setStatus] = useState(statusParam ?? '')
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -52,14 +52,14 @@ export const SearchTeamTasks = ({ projects, members }: Props) => {
   }
 
   return ( 
-    <form className='flex flex-wrap gap-1' onSubmit={onSubmit}>
+    <form className='grid xl:grid-cols-12 grid-cols-1 gap-1 my-4' onSubmit={onSubmit}>
 
       <Popover>
-        <PopoverTrigger asChild>
+        <PopoverTrigger asChild className="xl:col-span-3">
           <Button
             variant={"outline"}
             className={cn(
-              "w-[240px] pl-3 text-left font-normal",
+              "pl-3 text-left font-normal w-full",
               !finishAt && "text-muted-foreground"
             )}
           >
@@ -74,7 +74,7 @@ export const SearchTeamTasks = ({ projects, members }: Props) => {
         <PopoverContent className="w-auto p-0" align="start">
           <Calendar
             mode="single"
-            selected={finishAt}
+            selected={finishAt as Date}
             onSelect={(value) => setFinishAt(value as Date)}
           />
         </PopoverContent>
@@ -82,7 +82,7 @@ export const SearchTeamTasks = ({ projects, members }: Props) => {
 
       <Select defaultValue={status ?? ' '} onValueChange={(value) => setStatus(value)}>
 
-        <SelectTrigger className='w-[150px]'>
+        <SelectTrigger className='xl:col-span-2 h-9'>
           <SelectValue placeholder="Status" />
         </SelectTrigger>
 
@@ -97,7 +97,7 @@ export const SearchTeamTasks = ({ projects, members }: Props) => {
 
       <Select defaultValue={userId ?? ''} onValueChange={(value) => setUserId(value)}>
 
-        <SelectTrigger className='w-[200px]'>
+        <SelectTrigger className='xl:col-span-2 h-9'>
           <SelectValue placeholder="Member" />
         </SelectTrigger>
 
@@ -117,7 +117,7 @@ export const SearchTeamTasks = ({ projects, members }: Props) => {
 
       <Select defaultValue={projectId ?? ''} onValueChange={(value) => setProjectId(value)}>
 
-        <SelectTrigger className='w-[200px]'>
+        <SelectTrigger className='xl:col-span-3 h-9'>
           <SelectValue placeholder="Project" />
         </SelectTrigger>
 
@@ -135,8 +135,8 @@ export const SearchTeamTasks = ({ projects, members }: Props) => {
 
         </Select>
       
-      <Button className='xl:w-fit md:w-fit w-full h-10' type='submit' variant='outline' size='sm'><Search className='size-4 text-secondaryMain' /></Button>
-      <Button className='xl:w-fit md:w-fit w-full h-10' type='button' onClick={clearFilters} variant='outline' size='sm'>Clear</Button>
+      <Button className='h-9 xl:col-span-1' type='submit' variant='outline' size='sm'><Search className='size-4 text-secondaryMain' /> Filter</Button>
+      <Button className='h-9 xl:col-span-1' type='button' onClick={clearFilters} variant='outline' size='sm'>Clear</Button>
 
     </form>
   );

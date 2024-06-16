@@ -1,14 +1,14 @@
 import { Status, Status as TaskStatus, TeamMemberStatus, TeamRoles } from '@prisma/client'
 
 export type APIResponse = {
-  message: string,
-  data?: unknown,
+  message: string
+  data?: unknown
   status: number
 }
 
 export type TTasksFilters = {
-  user: string,
-  date: Date | null | undefined | string,
+  user: string
+  date: Date | null | undefined | string
   status: TaskStatus | string | undefined
 }
 
@@ -24,63 +24,63 @@ export type User = {
   directCode: string
   photo: string
   jobTitle: string
-  allowUsingDirectCode: boolean,
-  private: boolean,
-  showDetails: boolean,
+  allowUsingDirectCode: boolean
+  private: boolean
+  showDetails: boolean
   bgCover: string | null
   planId: number
-  plan: Plan | null
+  plan: Plan
   createdAt: Date
   updatedAt: Date
 }
 
 export type Notification = {
-  id: number;
-  title: string;
-  url: string;
-  icon: string;
-  isRead: boolean | null,
-  sentIn: Date;
-  userId: number;
+  id: number
+  title: string
+  url: string
+  icon: string
+  isRead: boolean | null
+  sentIn: Date
+  userId: number
   user?: User
 }
 
 export type Team = {
-  id: number,
-  name: string,
-  about: string | null,
-  ownerId: number,
+  id: number
+  name: string
+  about: string | null
+  ownerId: number
   
-  owner?: User,
+  owner?: User
   members?: TeamMember[]
   invitations?: TeamInvite[]
 
-  teamProjects?: TeamProject[],
+  teamProjects?: TeamProject[]
 
-  createdAt: Date,
-  updatedAt: Date,
+  createdAt: Date
+  updatedAt: Date
 }
 
 export type TeamMember = {
-  id: number,
-  teamId: number,
-  userId: number,
-  team: Team,
-  user: User,
-  role: TeamRoles,
-  status: TeamMemberStatus,
-  joinedIn: Date,
+  id: number
+  teamId: number
+  userId: number
+  team: Team
+  user: User
+  role: TeamRoles
+  status: TeamMemberStatus
+  joinedIn: Date
 }
 
 export type TeamInvite = {
-  id: number,
-  invitationRole: TeamRoles,
-  status: Status,
-  sentIn: Date,
-  teamId: number,
-  userId: number,
-  team?: Team,
-  user?: User,
+  id: number
+  invitationRole: TeamRoles
+  status: Status
+  sentIn: Date
+  teamId: number
+  userId: number
+  team?: Team
+  user?: User
 }
 
 export type TeamProject = {
@@ -105,18 +105,18 @@ export type TeamProject = {
 }
 
 export type TeamProjectTask = {
-  id: number,
-  title: string,
-  description: string,
-  status: TaskStatus,
-  url?: string,
-  notes?: string,
-  userId: number,
-  projectId: number,
-  project: TeamProject,
-  user: User,
-  finishAt: Date,
-  createdAt: Date,
+  id: number
+  title: string
+  description: string
+  status: TaskStatus
+  url?: string
+  notes?: string
+  userId: number
+  projectId: number
+  project: TeamProject
+  user: User
+  finishAt: Date
+  createdAt: Date
   updatedAt: Date
 }
 
@@ -137,65 +137,67 @@ export type TeamTaskReply = {
 }
 
 export type TeamProjectBoard = {
-  id: number,
-  title: string,
-  description: string,
-  backgroundColor: string,
-  textColor: string,
+  id: number
+  title: string
+  description: string
+  backgroundColor: string
+  textColor: string
 
-  ownerId: number,
-  projectId: number,
+  ownerId: number
+  projectId: number
 
-  owner: User,
-  project: TeamProject,
+  owner: User
+  project: TeamProject
 
-  createdAt: Date,
+  createdAt: Date
   updatedAt: Date
 }
 
 export type Plan = {
-  id: number,
-  name: string,
+  id: number
+  name: string
+
+  paymentLink: string
 
   price: number
   oldPrice: number
 
-  numberOfTeams: number,
-  numberOfProjectTeams: number,
-  numberOfTeamMembers: number,
-  numberOfBoards: number,
-  numberOfTasks: number,
+  numberOfTeams: number
+  numberOfProjectTeams: number
+  numberOfTeamMembers: number
+  numberOfBoards: number
+  numberOfTasks: number
 
   numberOfPersonalProjects: number
   numberOfPersonalTasks: number
   numberOfPersonalBoards: number
   
-  hasMailSystem: boolean,
-  hasAnalytics: boolean,
-  hasCharts: boolean,
-  canDirectAdd: boolean,
+  hasMailSystem: boolean
+  hasAnalytics: boolean
+  hasCharts: boolean
+  canDirectAdd: boolean
 
-  createdAt: Date,
-  updatedAt: Date,
+  createdAt: Date
+  updatedAt: Date
 
   features?: PlanFeature[]
 }
 
 export type PlanFeature = {
-  id: number,
-  title: string,
-  available: boolean,
-  planId: number, 
+  id: number
+  title: string
+  available: boolean
+  planId: number 
   plan?: Plan
 }
 
-export type TPermission = "global" | "team" | "team-project";
+export type TPermission = "global" | "team" | "team-project"
 
 export type GlobalPermissionsType = {
-  hasMailSystem: boolean,
-  hasAnalytics: boolean,
-  hasCharts: boolean,
-  canDirectAdd: boolean,
+  hasMailSystem: boolean
+  hasAnalytics: boolean
+  hasCharts: boolean
+  canDirectAdd: boolean
   canCreateMorePersonalProjects: boolean
   canCreateMorePersonalTasks: boolean
   canCreateMorePersonalBoards: boolean
@@ -203,74 +205,94 @@ export type GlobalPermissionsType = {
 }
 
 export type TeamPermissionsType = {
-  canCreateMoreTeamProjects: boolean,
+  canCreateMoreTeamProjects: boolean
   canAddMoreTeamMembers: boolean
 }
 
 export type TeamProjectPermissionsType = {
-  canCreateMoreBoards: boolean,
+  canCreateMoreBoards: boolean
   canCreateMoreTasks: boolean
 }
 
 export type Permission = {
-  id: number;
-  name: string;
-  tag: string;
-  displayName: string;
+  id: number
+  name: string
+  tag: string
+  displayName: string
   teamPermissions: TeamPermission[]
 }
 
 export type TeamPermission = {
-  id: number;
-  whoCanDo: TeamRoles;
-  teamId: number;
-  permissionId: number;
+  id: number
+  whoCanDo: TeamRoles
+  teamId: number
+  permissionId: number
   permission?: Permission
 }
 
 export type Project = {
-  id: number,
-  name: string,
-  description: string,
-  github: string | null,
-  url: string | null,
-  notes: string | null,
+  id: number
+  name: string
+  description: string
+  github: string | null
+  url: string | null
+  notes: string | null
   
-  ownerId: number,
-  owner?: User | null,
+  ownerId: number
+  owner?: User | null
 
-  createdAt: Date,
+  createdAt: Date
   updatedAt: Date
 }
 
 export type ProjectFile = {
-  id: number,
-  name: string,
-  description: string,
-  url: string,
+  id: number
+  name: string
+  description: string
+  url: string
   
-  ownerId: number,
-  owner: User | null,
+  ownerId: number
+  owner: User | null
 
-  projectId: number,
-  project: Project | null,
+  projectId: number
+  project: Project | null
 
-  createdAt: Date,
+  createdAt: Date
   updatedAt: Date
 }
 
 export type Task = {
-  id: number,
-  title: string,
-  description: string,
-  url: string | null,
-  notes: string | null,
-  status: any,
+  id: number
+  title: string
+  description: string
+  url: string | null
+  notes: string | null
+  status: any
   
-  ownerId: number,
-  owner?: User | null,
+  ownerId: number
+  owner?: User | null
 
-  finishAt: Date,
-  createdAt: Date,
+  finishAt: Date
+  createdAt: Date
   updatedAt: Date
+}
+
+export type Subscription = {
+  id: number
+  planId: number
+  userId: number
+  subTotal: number
+  total: number
+  currency: string
+  email: string
+  status: string
+  customerId: string
+  invoiceId: string
+  subscriptionId: string
+
+  user?: User
+  plan: Plan
+  
+  expiresAt: bigint
+  createdAt: Date
 }

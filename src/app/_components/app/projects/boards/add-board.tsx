@@ -24,7 +24,6 @@ import { QueryKeys } from "@/lib/query-keys";
 import { BoardBgColors, BoardTextColors } from "@/lib/colors";
 import { TeamProject } from "@/types";
 import { CreateProjectBoardSchema } from "@/schema";
-import { Image } from "lucide-react";
 
 type Props = { 
   project: TeamProject,
@@ -38,6 +37,7 @@ export const AddBoardAction = ({ className, project }: Props) => {
   const permission = useTPP()
   const roleAddBoard = useRole('boards', 'add-boards', project.teamId)
 
+  const [open, setOpen] = useState(false)
   const [bgColor, setBgColor] = useState('')
   const [txtColor, setTxtColor] = useState('')
 
@@ -56,6 +56,7 @@ export const AddBoardAction = ({ className, project }: Props) => {
     onSuccess: (data) => {
       toast.message(data.message)
       queryClient.invalidateQueries({ queryKey: QueryKeys.teamProjectBoards(project.teamId, project.id) })
+      setOpen(false)
     }
   })
 
@@ -64,7 +65,7 @@ export const AddBoardAction = ({ className, project }: Props) => {
   }
 
   return ( 
-    <Dialog>
+    <Dialog onOpenChange={setOpen} open={open}>
 
       <DialogTrigger className={cn('rounded-sm text-blackborder-input bg-background font-medium text-sm hover:bg-accent p-0.5 px-4 w-full border hover:text-accent-foreground', className)}>Add Board</DialogTrigger>
 
@@ -160,7 +161,7 @@ export const AddBoardAction = ({ className, project }: Props) => {
 
             {permission.canCreateMoreBoards ? (
               <React.Fragment>
-                {(roleAddBoard.access || project.team.ownerId === user?.id) ? (
+                {(roleAddBoard.access || project?.team?.ownerId === user?.id) ? (
                   <DialogFooter>
                     <LoadingButton type='submit' loading={createMutation.isPending} className='px-4 h-9'>Create</LoadingButton>
                   </DialogFooter>

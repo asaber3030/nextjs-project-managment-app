@@ -17,7 +17,7 @@ export const OneClient = ({ stars, idx, image, name, jobTitle, description }: Pr
       <div className="max-h-[100px] h-[100px] flex justify-start items-center">
         <Image alt="Landing page" src={image} width={1000} height={1000} className='rounded-full object-contain w-[100px] h-[100px] mx-auto ring-2 ring-blue-500' />
       </div>
-      <h2 className="text-xl font-semibold mt-3 text-center">{name}</h2>
+      <h2 className="text-xl font-medium mt-3 text-center">{name}</h2>
       <h2 className="text-sm font-medium text-gray-500 text-center">{jobTitle}</h2>
       <div className='flex gap-2 justify-center my-2'>
         {Array.from({ length: stars }).map((star) => (

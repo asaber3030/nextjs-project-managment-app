@@ -4,7 +4,7 @@ import db from "@/services/prisma";
 
 import { TeamPermission, User } from "@/types";
 import { CreateProjectSchema, CreateTeamSchema } from "@/schema";
-import { Status, TeamMemberStatus, TeamRoles } from "@prisma/client";
+import { Prisma, Status, TeamMemberStatus, TeamRoles } from "@prisma/client";
 
 import { z } from "zod";
 import { route } from "@/lib/route";
@@ -20,6 +20,9 @@ export async function createTeam(ownerId: string, invitiations: User[], values: 
   const ownerIdN = parseInt(ownerId as string)
   const newTeam = await db.team.create({
     data: { name: values.name, about: values.about, ownerId: ownerIdN },
+  })
+  const newMember = await db.teamMember.create({
+    data: { userId: ownerIdN, teamId: newTeam.id }
   })
   await notify(
     `<b>${newTeam.name}</b> team has been created!`,
@@ -43,7 +46,8 @@ export async function createTeam(ownerId: string, invitiations: User[], values: 
       })
     })
   }
-  revalidatePath(route.accountTeams())
+  revalidatePath(route.account('teams'))
+  revalidatePath(route.dashboard())
   return {
     message: 'Team created, and if you have invited any members they must accept to join your team!',
     status: 200,
@@ -99,7 +103,7 @@ export async function deleteTeams(ids: number[]) {
     }
   })
 
-  revalidatePath(route.accountTeams())
+  revalidatePath(route.account('teams'))
 
   return {
     status: 200,
@@ -140,7 +144,7 @@ export async function leaveTeams(ids: number[]) {
     }
   })
 
-  revalidatePath(route.accountTeams())
+  revalidatePath(route.account('teams'))
 
   return {
     status: 200,
@@ -164,7 +168,7 @@ export async function leaveOneTeam(membershipId: number) {
     await db.teamMember.deleteMany({
       where: { id: membershipId }
     })
-    revalidatePath(route.accountTeams())
+    revalidatePath(route.account('teams'))
     return {
       message: 'You have left the selected teams successfully.',
       status: 200
@@ -254,13 +258,57 @@ export async function getTeamProject(projectId: number) {
   return serverResponse(200, 'Projects query', project)
 }
 
-export async function getTeamProjects(teamId: number) {
+export async function getTeamProjects(teamId: number, projectName?: string, limit?: number) {
+  
+  const where: Prisma.TeamProjectWhereInput = { teamId }
+  
+  if (projectName) where.name = { contains: projectName }
+
+  if (limit) {
+    const projects = await db.teamProject.findMany({ 
+      where,
+      include: { team: true },
+      orderBy: { id: 'desc' },
+      take: limit
+    })
+    return serverResponse(200, 'Projects query', projects)
+  }
+
   const projects = await db.teamProject.findMany({ 
-    where: { teamId },
+    where,
     include: { team: true },
     orderBy: { id: 'desc' }
   })
   return serverResponse(200, 'Projects query', projects)
+}
+
+export async function getProjectStats(projectId: number) {
+  const stats = await db.teamProject.findUnique({ 
+    where: { id: projectId },
+    select: {
+      _count: {
+        select: {
+          projectBoards: true,
+          projectTasks: true
+        }
+      }
+    }
+  })
+  const pendingTasks = await db.teamProjectTasks.count({
+    where: { projectId, status: Status.Pending },
+  })
+  const acceptedTasks = await db.teamProjectTasks.count({
+    where: { projectId, status: Status.Accepted },
+  })
+  const refusedTasks = await db.teamProjectTasks.count({
+    where: { projectId, status: Status.Refused },
+  })
+  return {
+    stats,
+    pendingTasks,
+    acceptedTasks,
+    refusedTasks
+  }
 }
 
 export async function getTeamMembers(teamId: number) {
@@ -467,7 +515,7 @@ export async function inviteMembers(teamId: number, users: User[]) {
     users.forEach(async (invitation) => {
       await notify(
         `You have been invited to join team <b>${team?.name}</b>`,
-        route.teams(),
+        route.myInvitations(),
         invitation.id,
         notificationIcon('invite-to-team')
       )
@@ -535,7 +583,6 @@ export async function removeInvitation(invitationId: number) {
       message: 'Invitation has been removed!'
     }
   } catch (e) {
-    console.log(e)
     return {
       message: 'Something went wrong',
       status: 500

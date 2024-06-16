@@ -13,10 +13,10 @@ export const Footer = ({  }: Props) => {
       <div className="grid gap-8 xl:grid-cols-3 grid-cols-1">
         <div>
           <AppTitle className='text-2xl' />
-          <p className="text-gray-400 mt-3">This is a SaaS application is created to control teams, team members, projects, tasks, and more. There're many features add to this project which you can use by upgrading your plan.</p>
+          <p className="text-gray-400 mt-3">This is a SaaS application is created to control teams, team members, projects, tasks, and more. There&apos;re many features add to this project which you can use by upgrading your plan.</p>
 
           <div className='mt-4'>
-            <h3 className='text-white text-xl mb-2 font-bold'>Follow us on</h3>
+            <h3 className='text-white text-xl mb-2 font-semibold'>Follow us on</h3>
             <div className='flex gap-2'>
               {socialMedia.map(({ url, icon: Icon }, idx) => (
                 <a className='p-2 rounded-full bg-secondaryMain' key={`social-url-${idx}`} href={url}><Icon className='text-black size-4' /></a>
@@ -26,7 +26,7 @@ export const Footer = ({  }: Props) => {
         </div>
 
         <div>
-          <h3 className="text-lg text-white font-semibold mb-3">Useful Link</h3>
+          <h3 className="text-lg text-white font-medium mb-3">Useful Link</h3>
           <div className='grid xl:grid-cols-2 gap-4 grid-cols-1'>
             <ul className='list-disc space-y-2 pl-4'>
               <li className='text-gray-300 text-sm hover:underline'><Link href=''>About us</Link></li>
@@ -45,7 +45,7 @@ export const Footer = ({  }: Props) => {
 
         <div>
           <div>
-            <h3 className="text-lg text-white font-semibold mb-3">Do you have a project?</h3>
+            <h3 className="text-lg text-white font-medium mb-3">Do you have a project?</h3>
             <p className="text-gray-400 mt-3">Let us now through E-mail or Social media!</p>
             
             <div className="mt-4">

@@ -49,7 +49,7 @@ export const DeletePersonalProjectView = ({ project }: Props) => {
 
         <Alert>
           <Trash className="h-4 w-4" stroke='red' />
-          <AlertTitle className='text-red-500 font-semibold'>Deleting Project</AlertTitle>
+          <AlertTitle className='text-red-500 font-medium'>Deleting Project</AlertTitle>
           <AlertDescription>
             <ul className='mt-3 space-y-1 list-disc ml-5 text-gray-500'>
               <li>Once you delete this project you won&apos;t be able to restore it again.</li>

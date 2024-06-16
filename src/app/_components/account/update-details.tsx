@@ -21,7 +21,7 @@ export const UpdateAccountDetails = () => {
 
   const user = useContext(UserDataContext)
 
-  const { update, data } = useSession()
+  const { update } = useSession()
 
   const form = useForm({
     resolver: zodResolver(UserDetailsSchema),

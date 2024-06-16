@@ -12,7 +12,6 @@ import { Task } from "@/types"
 import { EmptyData } from "@/components/empty-data"
 import { Button } from "@/components/ui/button"
 import { CreatePersonalTask } from "./actions/create"
-import { PersonalTaskStatus } from "@prisma/client"
 
 type Props = {
   tasks: Task[]
@@ -40,43 +39,43 @@ export const ListPersonalTasks = ({ tasks }: Props) => {
       </div>
 
       <Title label="My Tasks" parentClassName="mb-4" hasBottomBorder>
-       
-        <form className='grid xl:grid-cols-10 grid-cols-1 gap-2' onSubmit={onSubmitSearch}>
-
-          <Input
-            className="col-span-3"
-            value={query} 
-            onChange={(event: ChangeEvent<HTMLInputElement>) => setQuery(event.target.value)} 
-            placeholder='Search..' 
-          />
-          
-          <Select defaultValue={orderBy} onValueChange={(value) => setOrderBy(value)}>
-            <SelectTrigger className="col-span-3">
-              <SelectValue placeholder="Order By" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="id">ID</SelectItem>
-              <SelectItem value="createdAt">Creation Date</SelectItem>
-              <SelectItem value="updatedAt">Last Update</SelectItem>
-              <SelectItem value="finishAt">Finish Date</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Select defaultValue={orderType} onValueChange={(value) => setOrderType(value)}>
-            <SelectTrigger className="col-span-3">
-              <SelectValue placeholder="Sort" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="desc">Descending</SelectItem>
-              <SelectItem value="asc">Ascending</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Button className="col-span-1 h-10" type='submit' variant='secondaryMain' size='sm'>Filter</Button>
-
-        </form>
-
+        <CreatePersonalTask label="Create Task" className="w-fit rounded-md text-sm flex gap-4 h-8 px-4 bg-transparent border hover:bg-border transition-all" iconClassName="size-4" />
       </Title>
+
+      <form className='grid xl:grid-cols-10 grid-cols-1 gap-2 mb-4' onSubmit={onSubmitSearch}>
+
+        <Input
+          className="col-span-3"
+          value={query} 
+          onChange={(event: ChangeEvent<HTMLInputElement>) => setQuery(event.target.value)} 
+          placeholder='Search..' 
+        />
+
+        <Select defaultValue={orderBy} onValueChange={(value) => setOrderBy(value)}>
+          <SelectTrigger className="col-span-3">
+            <SelectValue placeholder="Order By" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="id">ID</SelectItem>
+            <SelectItem value="createdAt">Creation Date</SelectItem>
+            <SelectItem value="updatedAt">Last Update</SelectItem>
+            <SelectItem value="finishAt">Finish Date</SelectItem>
+          </SelectContent>
+        </Select>
+
+        <Select defaultValue={orderType} onValueChange={(value) => setOrderType(value)}>
+          <SelectTrigger className="col-span-3">
+            <SelectValue placeholder="Sort" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="desc">Descending</SelectItem>
+            <SelectItem value="asc">Ascending</SelectItem>
+          </SelectContent>
+        </Select>
+
+        <Button className="col-span-1 h-10" type='submit' variant='secondaryMain' size='sm'>Filter</Button>
+
+      </form>
 
       {tasks.length === 0 ? (
         <EmptyData label="No tasks" />

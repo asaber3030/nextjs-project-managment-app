@@ -1,11 +1,11 @@
-import { deleteNotification, getNotifications, updateNotification } from "@/actions/user-data";
-import { QueryKeys } from "@/lib/query-keys";
 import { useMutation, useQuery } from "@tanstack/react-query";
+
+import { deleteNotification, getNotifications, updateNotification } from "@/actions/user-data";
 import { toast } from "sonner";
-import { useUser } from ".";
+
+import { QueryKeys } from "@/lib/query-keys";
 
 export function useNotifications() {
-  const user = useUser()
 
   const queryNotifications = useQuery({
     queryKey: QueryKeys.userNotifications(),
@@ -19,10 +19,7 @@ export function useNotifications() {
     }
   })
   const markAsReadMutation = useMutation({
-    mutationFn: ({ id }: { id: number }) => updateNotification(id, true),
-    onSuccess: (data) => {
-      toast.message(data.message)
-    }
+    mutationFn: ({ id }: { id: number }) => updateNotification(id, true)
   })
   const markAsUnreadMutation = useMutation({
     mutationFn: ({ id }: { id: number }) => updateNotification(id, false),

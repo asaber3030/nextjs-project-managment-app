@@ -26,7 +26,7 @@ export const AllProjectBoards = ({ project }: Props) => {
   return (
     <section className='mt-4'>
       
-      <h1 className='text-xl font-semibold mb-2'>Project Boards</h1>
+      <h1 className='text-xl font-medium mb-2'>Project Boards</h1>
 
       {!queryBoards.isFetched && queryBoards.isLoading && (
         <BoardSkeleton repeat={3} />
