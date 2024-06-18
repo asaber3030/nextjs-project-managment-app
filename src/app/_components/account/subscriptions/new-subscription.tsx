@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 
-import { usePlans } from "@/hooks/usePlans";
 import { useContext, useEffect, useState } from "react";
 import { useUser } from "@/hooks";
 
@@ -12,7 +11,6 @@ import { toast } from "sonner";
 import { Plan } from "@/types";
 
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import { PlansContext } from "@/providers/plans";
 
 export const NewSubscription = () => {

@@ -4,8 +4,9 @@ import { authOptions } from "@/services/auth";
 import { getServerSession } from "next-auth";
 
 import { AccountHeaderMain } from "@/app/_components/account/title-section";
-import { SubscriptionItem } from "@/app/_components/account/subscription-item";
+import { SubscriptionItem } from "@/app/_components/account/subscriptions/subscription-item";
 import { EmptyState } from "@/components/empty-state";
+import { NewSubscription } from "@/app/_components/account/subscriptions/new-subscription";
 
 const SubscriptionsPage = async () => {
 
@@ -26,7 +27,7 @@ const SubscriptionsPage = async () => {
         <EmptyState title="No Subscriptions found." />
       )}
 
-      <div className='divide-y'>
+      <div className='space-y-2'>
         {subscriptions.map((sub) => {
           return (
             <SubscriptionItem 
@@ -36,6 +37,7 @@ const SubscriptionsPage = async () => {
           )
         })}
       </div>
+      <NewSubscription />
 
     </div>
   );

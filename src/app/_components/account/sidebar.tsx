@@ -11,6 +11,7 @@ import { Camera, Clipboard, Share } from "lucide-react"
 import { UserDataContext } from "@/providers/user-data-provider"
 
 import { route } from "@/lib/route"
+import { CopyProfileURL } from "./copy-profile-url-button"
 
 type Props = {
   counts: {
@@ -48,8 +49,7 @@ export const AccountSidebar = ({ counts }: Props) => {
       </ul>
 
       <div className='px-4 mt-4 flex gap-1'>
-        <Button variant='outline' className='w-full flex-1 text-xs'><Share className='size-4 text-gray-400' /> Share</Button>
-        <Button variant='outline' className='w-full flex-1 text-xs'><Clipboard className='size-4 text-gray-400' /> Copy Profile URL</Button>
+        <CopyProfileURL username={user.username} />
       </div>
       
     </div>

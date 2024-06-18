@@ -7,17 +7,15 @@ import { useState } from "react";
 import { useInvoice, useSubscription } from "@/hooks/useSubscription";
 
 import { formatDate } from "@/lib/date";
-import { cn, formatNumber } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
 import { Subscription } from "@/types";
 
-import { ArrowRight, Check, Download, X } from "lucide-react";
-import { OnlySpinner } from "@/components/loading-spinner";
-import { Button } from "@/components/ui/button";
+import { ArrowRight, Check, X } from "lucide-react";
 import { CancelSubscriptionModal } from "./cancel-modal";
 import { SubscriptionMoneyLi } from "./money-details";
 import { SubscriptionInvoiceButtons } from "./invoice-buttons";
-import { SubscriptionSkeleton } from "../../skeleton/subscription-skeleton";
+import { OnlySpinner } from "@/components/loading-spinner";
 
 type Props = { subscription: Subscription }
 
@@ -82,21 +80,17 @@ export const SubscriptionItem = ({ subscription }: Props) => {
           <div className='flex xl:flex-row flex-col flex-wrap gap-2 justify-between xl:items-center border-t-0 border-none pb-0 mt-0'>
 
             <SubscriptionInvoiceButtons url={invoice?.invoice_pdf!} />
-            
-            {(subLoading || invoiceLoading) ? (
-              <OnlySpinner />
-            ): (
-              <CancelSubscriptionModal
-                subscriptionStatus={sub?.status!}
-                open={modalStatus}
-                setOpen={setModalStatus}
-                stripeSubscriptionId={subscription.subscriptionId}
-                dbSubscriptionId={subscription.id}
-                planId={subscription.planId}
-                dbStatus={subscription.status}
-                canCancelDueToDate={!isAfter}
-              />
-            )}
+
+            <CancelSubscriptionModal
+              planId={subscription.planId}
+              subscriptionStatus={sub?.status!}
+              open={modalStatus}
+              setOpen={setModalStatus}
+              stripeSubscriptionId={subscription.subscriptionId}
+              dbSubscriptionId={subscription.id}
+              dbStatus={subscription.status}
+              canCancelDueToDate={!isAfter}
+            />
             
           </div>
 

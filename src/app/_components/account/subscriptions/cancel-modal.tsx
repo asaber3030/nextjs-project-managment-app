@@ -1,20 +1,22 @@
+import Stripe from "stripe";
+
 import { useMutation } from "@tanstack/react-query";
 
 import { cancelSubscription } from "@/actions/stripe";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
+import { LoadingButton } from "@/components/loading-button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import Stripe from "stripe";
 
 type Props = {
-  subscriptionStatus: Stripe.Subscription.Status,
-  dbStatus: string,
-  canCancelDueToDate: boolean,
-  stripeSubscriptionId: string,
-  dbSubscriptionId: number,
-  planId: number,
-  open: boolean, 
+  subscriptionStatus: Stripe.Subscription.Status
+  dbStatus: string
+  canCancelDueToDate: boolean
+  stripeSubscriptionId: string
+  dbSubscriptionId: number
+  planId: number
+  open: boolean
   setOpen: (value: boolean) => void
 }
 
@@ -29,9 +31,10 @@ export const CancelSubscriptionModal = ({ dbStatus, subscriptionStatus, setOpen,
 
   const handleCancel = () => {
     mutateCancel.mutate()
+    setOpen(false)
   }
 
-  if (!canCancelDueToDate || (dbStatus === 'canceled') || planId === 1) {
+  if (!canCancelDueToDate || (subscriptionStatus === 'canceled') || planId === 1) {
     return (
       <p className='text-xs text-gray-500'>Cancelling isn&apos;t available due to date.</p>
     )
@@ -49,7 +52,7 @@ export const CancelSubscriptionModal = ({ dbStatus, subscriptionStatus, setOpen,
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <Button onClick={handleCancel} variant='destructive'>Confirm</Button>
+          <LoadingButton loading={mutateCancel.isPending} onClick={handleCancel} variant='destructive'>Confirm</LoadingButton>
           <Button variant='outline' onClick={() => setOpen(false)}>Cancel</Button>
         </DialogFooter>
       </DialogContent>

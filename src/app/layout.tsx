@@ -16,6 +16,8 @@ import { NextAuthProvider } from '@/providers/next-auth'
 import { UserDataProvider } from '@/providers/user-data-provider'
 import { NotificationsProvider } from '@/providers/notifications'
 import { User } from '@/types'
+import { getPlans } from '@/actions/app'
+import { PlansProvider } from '@/providers/plans'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -30,6 +32,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const user = session?.user as unknown as User
 
   const notifications = await getNotifications()
+  const plans = await getPlans()
 
   return (
     <ReactQueryClientProvider>
@@ -37,12 +40,14 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <body className={cn(inter.className, 'bg-gray-50')}>
           <Toaster />
           <NextAuthProvider>
-            <UserDataProvider value={user}>
-              <NotificationsProvider value={notifications}>
-                <Navbar />
-                {children}
-              </NotificationsProvider>
-            </UserDataProvider>
+            <PlansProvider value={plans}>
+              <UserDataProvider value={user}>
+                <NotificationsProvider value={notifications}>
+                  <Navbar />
+                  {children}
+                </NotificationsProvider>
+              </UserDataProvider>
+            </PlansProvider>
           </NextAuthProvider>
         </body>
       </html>
