@@ -82,7 +82,7 @@ const AssigedTasksPage = async () => {
                       </div>
 
                       {project.projectTasks.length === 0 && <EmptyData title="No Tasks" />}
-                      <div className='grid grid-cols-1 xl:grid-cols-2 gap-2'>
+                      <div className='grid grid-cols-1 xl:grid-cols-3 gap-2'>
                         {project.projectTasks.map((task) => (
                           <OneTask task={task as TeamProjectTask} key={`project-task-details-${task.id}`} />
                         ))}

@@ -7,6 +7,7 @@ export const route = {
   joinedTeams: () => `/dashboard/joined-teams`,
 
   userProfile: (username: string) => `/profile/${username}`,
+  sharedProfile: (username: string) => `/shared/${username}`,
   
   viewTeam: (teamId: number) => `/dashboard/teams/${teamId}`,
   viewTeamSettings: (teamId: number) => `/dashboard/teams/${teamId}/settings`,

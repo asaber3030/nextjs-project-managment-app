@@ -1,13 +1,17 @@
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogClose, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-
-import { TeamMember } from "@/types";
+import React from "react";
 
 import { useMembers } from "@/hooks/useMembers";
 import { useState } from "react";
 import { useRole } from "@/hooks/useRoles";
-import React from "react";
+
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogClose, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button";
 import { OnlySpinner } from "@/components/loading-spinner";
+
+import { TeamMember } from "@/types";
+import { useUser } from "@/hooks";
+import { useTeam } from "@/hooks/useTeams";
+import { NoPermissionAlert } from "@/components/no-permissions-alert";
 
 type Props = { member: TeamMember }
 
@@ -15,7 +19,10 @@ export const RemoveMemberAction = ({ member }: Props) => {
 
   const [modal, setModal] = useState(false)
 
-  const { deletionMutate, deletionPending } = useMembers(member?.teamId)
+  const { deletionMutate, deletionPending } = useMembers(member.teamId)
+  const { team } = useTeam(member.teamId)
+  
+  const user = useUser()
 
   const confirmDeletion = () => {
     deletionMutate({
@@ -44,11 +51,13 @@ export const RemoveMemberAction = ({ member }: Props) => {
           <OnlySpinner />
         ): (
           <React.Fragment>
-            {roleRemoveMembers.access && (
+            {(roleRemoveMembers.access || team?.ownerId === user?.id) ? (
               <DialogFooter>
               <Button onClick={() => setModal(false)} variant='outline' size='sm'>Close</Button>
               <DialogClose><Button onClick={confirmDeletion} disabled={deletionPending} variant='destructive' size='sm'>Confirm</Button></DialogClose>
             </DialogFooter>
+            ): (
+              <NoPermissionAlert />
             )}
           </React.Fragment>
         )}

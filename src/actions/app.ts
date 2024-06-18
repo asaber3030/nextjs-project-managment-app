@@ -17,6 +17,7 @@ export async function getPlans() {
 export async function getPlanById(id: number) {
   const plan = await db.plan.findUnique({
     where: { id },
+    include: { features: true }
   })
   return plan
 }

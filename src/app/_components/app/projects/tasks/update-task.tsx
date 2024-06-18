@@ -25,7 +25,6 @@ import { format } from "date-fns"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 
-import { QueryKeys } from "@/lib/query-keys"
 import { UpdateProjectTaskSchema } from "@/schema"
 import { TeamProjectTask } from "@/types"
 import { ClassValue } from "clsx"

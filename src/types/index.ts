@@ -25,6 +25,10 @@ export type User = {
   photo: string
   jobTitle: string
   allowUsingDirectCode: boolean
+  showPersonalProjects: boolean
+  showPersonalCounts: boolean
+  showPersonalTeams: boolean
+  showJoinedTeams: boolean
   private: boolean
   showDetails: boolean
   bgCover: string | null

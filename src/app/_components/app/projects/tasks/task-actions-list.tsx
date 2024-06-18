@@ -36,7 +36,7 @@ export const TaskActions = ({ task }: Props) => {
         fetched={roleUpdateTask.roleFetched}
         loading={roleUpdateTask.roleLoading}
         render={<UpdateTaskAction task={task} />}
-        renderSkeleton={<ButtonSkeleton className='w-[50px]' />}
+        renderSkeleton={<ButtonSkeleton className='w-[40px]' />}
       />
 
       <Render 
@@ -44,7 +44,7 @@ export const TaskActions = ({ task }: Props) => {
         fetched={roleDeleteTask.roleFetched}
         loading={roleDeleteTask.roleLoading}
         render={<DeleteTaskAction task={task} />}
-        renderSkeleton={<ButtonSkeleton className='w-[50px]' />}
+        renderSkeleton={<ButtonSkeleton className='w-[40px]' />}
       />
 
       <Render 
@@ -52,7 +52,7 @@ export const TaskActions = ({ task }: Props) => {
         fetched={roleAssignTask.roleFetched}
         loading={roleAssignTask.roleLoading}
         render={<AssignTaskAction task={task} />}
-        renderSkeleton={<ButtonSkeleton className='w-[50px]' />}
+        renderSkeleton={<ButtonSkeleton className='w-[40px]' />}
       />
     </div>
   );

@@ -7,6 +7,7 @@ import { useUser } from "@/hooks";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { BoardActions } from "./board-actions-list";
 import { TeamProjectBoard } from "@/types";
+import { route } from "@/lib/route";
 
 type Props = { board: TeamProjectBoard }
 
@@ -30,7 +31,7 @@ export const OneBoard = ({ board }: Props) => {
           <AvatarImage src={board.owner.photo} />
           <AvatarFallback>{board.owner.name[0]}</AvatarFallback>
         </Avatar>
-        <Link href='' className='font-semibold'>{board.owner.name}</Link>
+        <h3 className='font-semibold'>{board.owner.name}</h3>
       </section>
       
       {user?.id == board.ownerId && (

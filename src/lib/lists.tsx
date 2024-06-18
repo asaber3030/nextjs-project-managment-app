@@ -1,4 +1,4 @@
-import { Cog, User, Users, Gamepad, Check, CheckCheck, Folder, Image as ImageIcon, Home, ListChecks, FolderOpen, Building, Smile, UserPlus, Facebook, Linkedin, Github, DollarSign } from "lucide-react";
+import { Cog, User, Users, CheckCheck, Folder, Image as ImageIcon, Building, Smile, UserPlus, Facebook, Linkedin, Github, DollarSign } from "lucide-react";
 import { route } from "./route";
 
 export const accountSidebarURLs = [

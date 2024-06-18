@@ -5,12 +5,13 @@ import Link from "next/link"
 import { getServerSession } from "next-auth"
 import { notFound } from "next/navigation"
 import { userSelect } from "@/actions/config"
-import { getTeam } from "@/actions/user-data"
+import { getMembershipOfTeam, getTeam } from "@/actions/user-data"
 import { isMemberOfTeam } from "@/actions/check"
 import { authOptions } from "@/services/auth"
 import { badgeVariant } from "@/lib/utils"
+import { route } from "@/lib/route"
 
-import { TeamProjectTask, TeamTaskReply, User } from "@/types"
+import { TeamMember, TeamProjectTask, TeamTaskReply, User } from "@/types"
 
 import { AddTaskReply } from "@/app/_components/app/projects/tasks/add-task-reply"
 import { AssignTaskAction } from "@/app/_components/app/projects/tasks/assign-task"
@@ -22,7 +23,7 @@ import { UserHoverCard } from "@/app/_components/user/hover-card"
 import { EmptyData } from "@/components/empty-data"
 import { Title } from "@/components/title"
 import { Badge } from "@/components/ui/badge"
-import { route } from "@/lib/route"
+import { ChangeMemberStatusAction } from "@/app/_components/app/teams/members/actions/change-member-status-action"
 
 type Props = {
   params: { 

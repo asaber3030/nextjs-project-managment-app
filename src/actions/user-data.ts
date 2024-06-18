@@ -4,32 +4,17 @@ import db from "@/services/prisma";
 import bcrypt from 'bcrypt'
 
 import { PersonalTaskStatus, Status, Team } from "@prisma/client";
-import { TeamInvite, User } from "@/types";
-
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/services/auth";
-import { revalidatePath } from "next/cache";
-import { notificationIcon } from "@/lib/utils";
-import { route } from "@/lib/route";
-import { userSelect } from "./config";
-import { z } from "zod";
 import { ChangeDirectCodeSchema, ChangePasswordSchema, PersonalProjectSchema, PersonalTaskSchema } from "@/schema";
 import { AccountPrivacySchema, UserDetailsSchema } from "@/schema/user";
+import { TeamInvite, User } from "@/types";
 
-export async function testProjects() {
-  return await db.project.findMany()
-}
-
-export async function getCurrent() {
-  const session = await getServerSession(authOptions)
-  return session?.user
-}
-
-export async function getCurrentPlan() {
-  const current = await getCurrent()
-  if (!current) return await db.plan.findUnique({ where: { id: 1 } })
-  return await db.plan.findUnique({ where: { id: current.planId } })
-}
+import { revalidatePath } from "next/cache";
+import { getServerSession } from "next-auth";
+import { userSelect } from "./config";
+import { authOptions } from "@/services/auth";
+import { notificationIcon } from "@/lib/utils";
+import { route } from "@/lib/route";
+import { z } from "zod";
 
 export async function notify(title: string, url: string, userId: number, icon: string = notificationIcon()) {
   try {
@@ -44,6 +29,38 @@ export async function notify(title: string, url: string, userId: number, icon: s
     return notification
   } catch (error) {
     throw error
+  }
+}
+
+export async function getCurrent() {
+  const session = await getServerSession(authOptions)
+  return session?.user
+}
+
+export async function getCurrentPlan() {
+  const current = await getCurrent()
+  if (!current) return await db.plan.findUnique({ where: { id: 1 } })
+  return await db.plan.findUnique({ where: { id: current.planId } })
+}
+
+export async function getUserByUsername(username: string) {
+  return await db.user.findUnique({ where: { username }, select: userSelect })
+}
+
+export async function getUserCountsByUsername(username: string) {
+  const user = await db.user.findUnique({ where: { username }, select: { id: true } })
+  const userId = user?.id
+
+  const teams = await db.team.count({ where: { ownerId: userId } })
+  const projects = await db.project.count({ where: { ownerId: userId } })
+  const boards = await db.teamProjectBoards.count({ where: { ownerId: userId } })
+  const tasks = await db.task.count({ where: { ownerId: userId } })
+
+  return {
+    teams,
+    projects,
+    boards,
+    tasks,
   }
 }
 
@@ -97,7 +114,6 @@ export async function getUserCounts() {
   }
 
 }
-
 
 export async function getPersonalTasksStats() {
   const user = await getCurrent()
@@ -161,86 +177,6 @@ export async function getTeamInvitations(teamId: number) {
     }
   })
   return invitations as unknown as TeamInvite[]
-}
-
-export async function findUsersByArray(data: string[], excludeId: string) {
-  const excludedId = parseInt(excludeId)
-  
-  const users = await db.user.findMany({
-    where: { 
-      OR: [
-        { email: { in: data } },
-        { username: { in: data } },
-      ],
-      AND: [
-        { id: { not: excludedId } }
-      ]
-    },
-    select: userSelect
-  })
-  return users
-}
-
-export async function findUserByUsername(data: string, excludeId: string) {
-  const excludedId = parseInt(excludeId)
-  const user = await db.user.findUnique({
-    where: { username: data },
-    select: userSelect
-  })
-  return user
-}
-
-export async function findUserByCode(code: string) {
-  return await db.user.findUnique({ where: { directCode: code } }) as unknown as User
-}
-
-export async function searchUsers(emailOrUsername: string, excludeId: string) {
-  const current = await getCurrent()
-  const excludedId = parseInt(excludeId)
-  const users = await db.user.findMany({
-    where: { 
-      OR: [
-        { email: { contains: emailOrUsername } },
-        { username: { contains: emailOrUsername } },
-      ],
-      AND: [
-        { id: { not: current?.id } }
-      ]
-    },
-    select: userSelect
-  })
-  if (emailOrUsername != '') {
-    return users
-  }
-  return []
-}
-
-export async function searchUnInvitedMembers(filter: string, teamId: number) {
-  
-  const getMembers = await db.teamMember.findMany({ where: { teamId }, select: { userId: true } })
-  const getInvitations = await db.teamInvite.findMany({ where: { teamId }, select: { userId: true } })
-
-  const membersIds = getMembers.map((m) => m.userId)
-  const invitationsIds = getInvitations.map((m) => m.userId)
-
-  const current = await getCurrent()
-
-  const excludedIds = [...membersIds, ...invitationsIds, current?.id as number]
-  
-  const users = await db.user.findMany({
-    where: { 
-      OR: [
-        { email: { contains: filter } },
-        { username: { contains: filter } },
-        { name: { contains: filter } },
-      ],
-      AND: [
-        { id: { not: { in: excludedIds } } }
-      ]
-    },
-    select: userSelect
-  })
-  return users
 }
 
 export async function getTeamMemberData(userId: number, teamId: number) {
@@ -324,6 +260,131 @@ export async function getMemberBoards(userId: number, teamId: number, projectId?
   return boards
 }
 
+export async function getPersonalProjects(query: string = '', orderByColumn: string = 'id', orderType: 'asc' | 'desc' = 'desc', ownerId?: number) {
+  try {
+    const current = await getCurrent();
+    const personalProjects = await db.project.findMany({
+      where: { 
+        OR: [
+          { name: { contains: query } }
+        ],
+        AND: [
+          { ownerId: ownerId ? ownerId : current?.id }
+        ]
+      },
+      orderBy: { [orderByColumn]: orderType },
+    })
+    return personalProjects;
+  } catch (error) {
+    throw error
+  }
+}
+
+export async function getPersonalProjectsByUsername(username: string) {
+  try {
+    const personalProjects = await db.project.findMany({
+      where: { 
+        owner: { username }
+      }
+    })
+    return personalProjects;
+  } catch (error) {
+    throw error
+  }
+}
+
+export async function getPersonalProject(id: number) {
+  try {
+    const project = await db.project.findUnique({
+      where: { id }
+    })
+    return project;
+  } catch (error) {
+    throw error
+  }
+}
+
+// Find
+export async function findUsersByArray(data: string[], excludeId: string) {
+  const excludedId = parseInt(excludeId)
+  
+  const users = await db.user.findMany({
+    where: { 
+      OR: [
+        { email: { in: data } },
+        { username: { in: data } },
+      ],
+      AND: [
+        { id: { not: excludedId } }
+      ]
+    },
+    select: userSelect
+  })
+  return users
+}
+
+export async function findUserByUsername(data: string, excludeId: string) {
+  const user = await db.user.findUnique({
+    where: { username: data },
+    select: userSelect
+  })
+  return user
+}
+
+export async function findUserByCode(code: string) {
+  return await db.user.findUnique({ where: { directCode: code } }) as unknown as User
+}
+
+export async function searchUsers(emailOrUsername: string, excludeId: string) {
+  const current = await getCurrent()
+  const users = await db.user.findMany({
+    where: { 
+      OR: [
+        { email: { contains: emailOrUsername } },
+        { username: { contains: emailOrUsername } },
+      ],
+      AND: [
+        { id: { not: current?.id } }
+      ]
+    },
+    select: userSelect
+  })
+  if (emailOrUsername != '') {
+    return users
+  }
+  return []
+}
+
+export async function searchUnInvitedMembers(filter: string, teamId: number) {
+  
+  const getMembers = await db.teamMember.findMany({ where: { teamId }, select: { userId: true } })
+  const getInvitations = await db.teamInvite.findMany({ where: { teamId }, select: { userId: true } })
+
+  const membersIds = getMembers.map((m) => m.userId)
+  const invitationsIds = getInvitations.map((m) => m.userId)
+
+  const current = await getCurrent()
+
+  const excludedIds = [...membersIds, ...invitationsIds, current?.id as number]
+  
+  const users = await db.user.findMany({
+    where: { 
+      OR: [
+        { email: { contains: filter } },
+        { username: { contains: filter } },
+        { name: { contains: filter } },
+      ],
+      AND: [
+        { id: { not: { in: excludedIds } } }
+      ]
+    },
+    select: userSelect
+  })
+  return users
+}
+
+// Notifications
+
 export async function updateNotification(notificationId: number, status: boolean = true) {
   try {
     const updated = await db.notification.update({
@@ -367,38 +428,7 @@ export async function deleteNotification(notificationId: number) {
   }
 }
 
-// Personal Data
-export async function getPersonalProjects(query: string = '', orderByColumn: string = 'id', orderType: 'asc' | 'desc' = 'desc', ownerId?: number) {
-  try {
-    const current = await getCurrent();
-    const personalProjects = await db.project.findMany({
-      where: { 
-        OR: [
-          { name: { contains: query } }
-        ],
-        AND: [
-          { ownerId: ownerId ? ownerId : current?.id }
-        ]
-      },
-      orderBy: { [orderByColumn]: orderType },
-    })
-    return personalProjects;
-  } catch (error) {
-    throw error
-  }
-}
-
-export async function getPersonalProject(id: number) {
-  try {
-    const project = await db.project.findUnique({
-      where: { id },
-      include: { files: true },
-    })
-    return project;
-  } catch (error) {
-    throw error
-  }
-}
+// Update personal items
 
 export async function updatePersonalProject(id: number, data: z.infer<typeof PersonalProjectSchema>) {
   try {
@@ -811,4 +841,29 @@ export async function lastSubscription() {
   })
 
   return last
+}
+
+export async function getTeamsByUsername(username: string) {
+  return await db.team.findMany({
+    where: { owner: { username } },
+    select: { 
+      id: true,
+      name: true,
+      createdAt: true,
+      _count: { select: { members: true } } 
+    } 
+  })
+}
+
+export async function getJoinedTeamsByUsername(username: string) {
+  return await db.teamMember.findMany({
+    where: { user: { username } },
+    select: { 
+      joinedIn: true,
+      id: true,
+      team: { 
+        select: { name: true }
+      }
+    } 
+  })
 }

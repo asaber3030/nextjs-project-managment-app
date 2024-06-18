@@ -6,17 +6,15 @@ import { useRole } from "@/hooks/useRoles";
 import { useUser } from "@/hooks";
 
 import { Team } from "@/types";
+import { ClassValue } from "clsx";
 
-import { Title } from "@/components/title";
 import { TeamTasksSettings } from "./tasks/tasks-settings";
 import { TeamBoardsSettings } from "./boards/boards-settings";
 import { TeamProjectsSettings } from "./projects/projects-settings";
 import { TeamMembersSettings } from "./members/members-settings";
 import { TeamsSettings } from "./teams/teams-settings";
 import { LoadingSpinner } from "@/components/loading-spinner";
-
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { ClassValue } from "clsx";
 import { NoPermissionAlert } from "@/components/no-permissions-alert";
 
 type Props = {
@@ -27,8 +25,7 @@ export const TeamSettings = ({ team }: Props) => {
 
   const user = useUser()
   const roleTeamSettings = useRole('teams', 'update-team-roles', team.id)
-
-  const tabTriggerClassName: ClassValue = 'bg-white data-[state=active]:text-white data-[state=active]:bg-main'
+  const tabTriggerClassName: ClassValue = 'w-full bg-white data-[state=active]:text-white data-[state=active]:bg-main'
 
   return ( 
     <React.Fragment>
@@ -42,22 +39,22 @@ export const TeamSettings = ({ team }: Props) => {
               <Tabs defaultValue="teamTasksSettings" className='w-full bg-transparent p-0'>
       
                 <TabsList className='w-full'>
-                  <TabsTrigger className={`w-full ${tabTriggerClassName}`} value="teamTasksSettings">Tasks permissions</TabsTrigger>
-                  <TabsTrigger className={`w-full ${tabTriggerClassName}`} value="teamProjectsSettings">Projects permissions</TabsTrigger>
-                  <TabsTrigger className={`w-full ${tabTriggerClassName}`} value="teamsSettings">Team Permissions</TabsTrigger>
-                  <TabsTrigger className={`w-full ${tabTriggerClassName}`} value="teamBoardsSettings">Boards permissions</TabsTrigger>
-                  <TabsTrigger className={`w-full ${tabTriggerClassName}`} value="teamMembersSettings">Members permissions</TabsTrigger>
+                  <TabsTrigger className={tabTriggerClassName} value="teamTasksSettings">Tasks permissions</TabsTrigger>
+                  <TabsTrigger className={tabTriggerClassName} value="teamsSettings">Team permissions</TabsTrigger>
+                  <TabsTrigger className={tabTriggerClassName} value="teamsProjectsSettings">Projects Permissions</TabsTrigger>
+                  <TabsTrigger className={tabTriggerClassName} value="teamBoardsSettings">Boards permissions</TabsTrigger>
+                  <TabsTrigger className={tabTriggerClassName} value="teamMembersSettings">Members permissions</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="teamTasksSettings">
                   <TeamTasksSettings team={team} />
                 </TabsContent>
 
-                <TabsContent value="teamProjectsSettings">
+                <TabsContent value="teamsSettings">
                   <TeamsSettings team={team} />
                 </TabsContent>
 
-                <TabsContent value="teamsSettings">
+                <TabsContent value="teamsProjectsSettings">
                   <TeamProjectsSettings team={team} />
                 </TabsContent>
 

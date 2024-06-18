@@ -3,7 +3,6 @@ import NextAuth from "next-auth"
 declare module "next-auth" {
 
   interface User {
-    _id: number
     id: number
     username: string
     displayName: string | null
@@ -16,6 +15,10 @@ declare module "next-auth" {
     photo: string
     jobTitle: string
     allowUsingDirectCode: boolean
+    showPersonalProjects: boolean
+    showPersonalCounts: boolean
+    showPersonalTeams: boolean
+    showJoinedTeams: boolean
     private: boolean
     showDetails: boolean
     provider: string
@@ -28,7 +31,6 @@ declare module "next-auth" {
   
   interface Session {
     user: {
-      _id: number
       id: number
       username: string
       displayName: string | null
@@ -41,6 +43,10 @@ declare module "next-auth" {
       photo: string
       jobTitle: string
       allowUsingDirectCode: boolean
+      showPersonalProjects: boolean
+      showPersonalCounts: boolean
+      showPersonalTeams: boolean
+      showJoinedTeams: boolean
       private: boolean
       showDetails: boolean
       planId: number
@@ -51,7 +57,6 @@ declare module "next-auth" {
       updatedAt: Date
     }
     token: {
-      _id: number
       id: number
       username: string
       displayName: string | null
@@ -64,9 +69,13 @@ declare module "next-auth" {
       photo: string
       provider: string
       jobTitle: string
+      showPersonalProjects: boolean
+      showPersonalCounts: boolean
       allowUsingDirectCode: boolean
-      private: boolean
+      showPersonalTeams: boolean
       showDetails: boolean
+      showJoinedTeams: boolean
+      private: boolean
       planId: number
       plan: Plan
       bgCover: string | null

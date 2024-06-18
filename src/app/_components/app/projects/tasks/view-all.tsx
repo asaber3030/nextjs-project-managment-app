@@ -111,7 +111,7 @@ export const ViewAllTasks = ({ project }: Props) => {
       ): (
         <React.Fragment>
           {tasks?.length > 0 ? (
-            <div className='grid lg:grid-cols-2 md:grid-cols-2 xl:grid-cols-2 grid-cols-1 gap-2'>
+            <div className='grid lg:grid-cols-3 md:grid-cols-2 xl:grid-cols-3 grid-cols-1 gap-2'>
               {tasks?.map(task => (
                 <OneTask task={task as any} key={`task-view-idx-${task.id}`} />
               ))}

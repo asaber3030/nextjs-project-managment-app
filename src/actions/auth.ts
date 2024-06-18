@@ -1,10 +1,10 @@
+import db from "@/services/prisma";
+import axios from 'axios'
+
 import { z } from "zod";
 import { apiURL } from "@/lib/constants";
 
-import { RegisterSchema } from "@/schema/user";
-
-import axios from 'axios'
-import db from "@/services/prisma";
+import { RegisterSchema } from "@/schema/user"
 
 export async function registerAction(values: z.infer<typeof RegisterSchema>) {
   return axios.post(`${apiURL}/user/register`, values).then((res) => {

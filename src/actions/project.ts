@@ -2,24 +2,23 @@
 
 import db from "@/services/prisma";
 
-import { z } from "zod";
-import { userSelect } from "./config";
 import { CreateProjectBoardSchema, CreateProjectTaskSchema, CreateTaskReply, UpdateProjectBoardSchema, UpdateProjectTaskSchema } from "@/schema";
-import { TTasksFilters } from "@/types";
 import { Status, TeamProjectBoards } from "@prisma/client";
+import { TTasksFilters } from "@/types";
+
 import { getCurrent, notify } from "./user-data";
 import { revalidatePath } from "next/cache";
+import { userSelect } from "./config";
 import { route } from "@/lib/route";
+import { z } from "zod";
 
 // Tasks
 
 export async function getProjectTasks(projectId: number, limit?: number) {
 
-  const projectIdN = parseInt(projectId as any)
-
   if (limit) {
     const tasks = await db.teamProjectTasks.findMany({
-      where: { projectId: projectIdN },
+      where: { projectId},
       orderBy: { id: 'desc' },
       include: { user: { select: userSelect } },
       take: limit
@@ -32,7 +31,7 @@ export async function getProjectTasks(projectId: number, limit?: number) {
   }
 
   const tasks = await db.teamProjectTasks.findMany({
-    where: { projectId: projectIdN },
+    where: { projectId },
     orderBy: { id: 'desc' },
     include: { user: true }
   })
@@ -45,10 +44,8 @@ export async function getProjectTasks(projectId: number, limit?: number) {
 
 export async function searchProjectTasks(projectId: number, filters: TTasksFilters) {
 
-  const projectIdN = parseInt(projectId as any)
-
   const andFilters: any = [
-    { projectId: projectIdN }
+    { projectId: projectId }
   ]
 
   if (filters.status && filters.status != 'All') {
@@ -88,7 +85,7 @@ export async function createTask(projectId: number, values: z.infer<typeof Creat
   const { title, description, url, notes, finishAt, status } = values
   try {
     values.userId.forEach(async (id) => {
-      const createdTasks = await db.teamProjectTasks.create({
+      await db.teamProjectTasks.create({
         data: {
           title,
           description,
@@ -117,11 +114,9 @@ export async function createTask(projectId: number, values: z.infer<typeof Creat
 
 export async function updateTask(taskId: number, values: z.infer<typeof UpdateProjectTaskSchema>) {
 
-  const taskIdN = Number(taskId)
-
   try {
     const updateTask = await db.teamProjectTasks.update({
-      where: { id: taskIdN },
+      where: { id: taskId },
       data: {
         ...values,
         updatedAt: new Date()
@@ -143,10 +138,8 @@ export async function updateTask(taskId: number, values: z.infer<typeof UpdatePr
 
 export async function deleteTask(taskId: number) {
 
-  const taskIdN = Number(taskId)
-
   try {
-    const updateTask = await db.teamProjectTasks.delete({ where: { id: taskId } })
+    await db.teamProjectTasks.delete({ where: { id: taskId } })
     return {
       status: 200,
       message: 'Task has been deleted!'
@@ -162,16 +155,15 @@ export async function deleteTask(taskId: number) {
 
 export async function assignTaskTo(taskId: number, toUser: number) {
   
-  const taskIdN = Number(taskId)
-
   try {
     const updateTask = await db.teamProjectTasks.update({
-      where: { id: taskIdN },
+      where: { id: taskId },
       data: {
         userId: toUser,
         updatedAt: new Date()
       }
     })
+    revalidatePath(route.assignedTasks())
     return {
       task: updateTask,
       status: 200,
@@ -218,9 +210,6 @@ export async function getProjectBoards(projectId: number, limit?: number) {
 
 export async function createBoard(projectId: number, ownerId: number, values: z.infer<typeof CreateProjectBoardSchema>) {
 
-  const ownerIdN = Number(ownerId)
-  const projectIdN = Number(projectId)
-
   const { title, description, backgroundColor, textColor } = values
   try {
     
@@ -230,8 +219,8 @@ export async function createBoard(projectId: number, ownerId: number, values: z.
         description,
         backgroundColor,
         textColor,
-        ownerId: ownerIdN,
-        projectId: projectIdN,
+        ownerId,
+        projectId,
       }
     })
     
@@ -247,53 +236,6 @@ export async function createBoard(projectId: number, ownerId: number, values: z.
     }
   }
   
-}
-
-export async function updateBoard(boardId: number, values: z.infer<typeof UpdateProjectBoardSchema>) {
-
-  const boardIdN = Number(boardId)
-
-  const { title, description, backgroundColor, textColor } = values
-  try {
-    const updatedBoard = await db.teamProjectBoards.update({
-      where: { id: boardIdN },
-      data: {
-        title,
-        description,
-        backgroundColor,
-        textColor,
-      }
-    })
-    return {
-      board: updatedBoard,
-      status: 200,
-      message: 'Board has been updated!'
-    }
-  } catch (e) {
-    return {
-      status: 500,
-      message: 'Something went wrong!'
-    }
-  }
-  
-}
-
-export async function deleteBoard(boardId: number) {
-
-  const boardIdN = Number(boardId)
-
-  try {
-    await db.teamProjectBoards.delete({ where: { id: boardIdN } })
-    return {
-      status: 200,
-      message: 'Board has been deleted!'
-    }
-  } catch (e) {
-    return {
-      status: 500,
-      message: 'Something went wrong!'
-    }
-  }
 }
 
 export async function createTaskRelpy(teamId: number, taskId: number, data: z.infer<typeof CreateTaskReply>) {
@@ -315,4 +257,49 @@ export async function createTaskRelpy(teamId: number, taskId: number, data: z.in
   await notify(`You have new message about task <b>${task?.title}</b> that says <b>${data.title}</b>`, route.viewTeamTask(teamId, taskId), task?.user?.id as number)
   revalidatePath(route.viewTeamTask(teamId, taskId))
   return newReply
+}
+
+export async function updateBoard(boardId: number, values: z.infer<typeof UpdateProjectBoardSchema>) {
+
+  const { title, description, backgroundColor, textColor } = values
+  try {
+    const updatedBoard = await db.teamProjectBoards.update({
+      where: { id: boardId },
+      data: {
+        title,
+        description,
+        backgroundColor,
+        textColor,
+      }
+    })
+    const board = await db.teamProjectBoards.findUnique({ where: { id: boardId }, select: { project: { select: { teamId: true } } } })
+    if (board) revalidatePath(route.viewTeamBoards(board.project.teamId as number))
+    return {
+      board: updatedBoard,
+      status: 200,
+      message: 'Board has been updated!'
+    }
+  } catch (e) {
+    return {
+      status: 500,
+      message: 'Something went wrong!'
+    }
+  }
+  
+}
+
+export async function deleteBoard(boardId: number) {
+
+  try {
+    await db.teamProjectBoards.delete({ where: { id: boardId } })
+    return {
+      status: 200,
+      message: 'Board has been deleted!'
+    }
+  } catch (e) {
+    return {
+      status: 500,
+      message: 'Something went wrong!'
+    }
+  }
 }

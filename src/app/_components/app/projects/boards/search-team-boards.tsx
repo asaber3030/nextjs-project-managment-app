@@ -25,8 +25,8 @@ export const SearchBoardsByMembers = ({ members }: Props) => {
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     if (filter) {
-      router.push(route.viewTeamBoards(+params.teamId))
-      return;
+      router.push(route.viewTeamBoards(+params.teamId) + `?owner=${filter}`)
+      return
     }
   }
 

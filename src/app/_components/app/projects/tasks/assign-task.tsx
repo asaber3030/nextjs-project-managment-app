@@ -19,6 +19,8 @@ import { assignTaskTo } from "@/actions/project";
 import { QueryKeys } from "@/lib/query-keys";
 import { TeamProjectTask } from "@/types";
 import { ClassValue } from "clsx";
+import { useProject } from "@/hooks/useProjects";
+import { useTeam } from "@/hooks/useTeams";
 
 type Props = { 
   task: TeamProjectTask
@@ -31,19 +33,17 @@ export const AssignTaskAction = ({ task, label, className, iconClassName }: Prop
 
   const queryClient = useQueryClient()
 
-  const params: { teamId: string, projectId: string } = useParams()
-  const teamId = Number(params.teamId)
-  const projectId = Number(params.projectId)
+  const { project } = useProject(task.projectId);
+  const { team } = useTeam(project?.teamId)
+  const { members, isMembersLoading } = useMembers(team?.id as number)
 
   const [activeUser, setActiveUser] = useState(task.userId)
-
-  const { members, isMembersLoading } = useMembers(teamId)
 
   const assignMutation = useMutation({
     mutationFn: () => assignTaskTo(task.id, activeUser),
     onSuccess: (data) => {
       toast.message(data.message)
-      queryClient.invalidateQueries({ queryKey: QueryKeys.teamProjectTasks(teamId, projectId) })
+      queryClient.invalidateQueries({ queryKey: QueryKeys.teamProjectTasks(team?.id as number, task.projectId) })
     }
   })
 

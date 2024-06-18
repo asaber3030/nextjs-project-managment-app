@@ -45,7 +45,7 @@ export const DisplayTeamProjects = ({ team, teamId }: Props) => {
       ): (
         <React.Fragment>
           {projects.length > 0 ? (
-            <div className='grid xl:grid-cols-2 md:grid-cols-1 grid-cols-1 gap-2'>
+            <div className='grid xl:grid-cols-3 md:grid-cols-1 grid-cols-1 gap-2'>
               {projects.map(project => (
                 <ProjectCard 
                   project={project} 

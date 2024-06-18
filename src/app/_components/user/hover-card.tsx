@@ -2,18 +2,19 @@
 
 import Link from "next/link"
 
+import { useUser } from "@/hooks" 
+
 import { CalendarIcon } from "lucide-react"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card"
 import { UserAvatar } from "./avatar"
 
 import { User } from "@/types"
+import { ClassValue } from "clsx"
 
 import { cn } from "@/lib/utils"
 import { route } from "@/lib/route"
 import { diffForHuman } from "@/lib/date"
-import { ClassValue } from "clsx"
-import { useUser } from "@/hooks"
 
 type Props = {
   user: User
@@ -25,7 +26,7 @@ type Props = {
 
 export const UserHoverCard = ({ label = 'Joined ', userURL, date, user, className }: Props) => {
 
-  const mainURL = userURL ? userURL : route.userProfile(user.username)
+  const mainURL = userURL ? userURL : route.sharedProfile(user.username)
   const current = useUser()
 
   return ( 

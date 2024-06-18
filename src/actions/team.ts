@@ -6,35 +6,34 @@ import { TeamPermission, User } from "@/types";
 import { CreateProjectSchema, CreateTeamSchema } from "@/schema";
 import { Prisma, Status, TeamMemberStatus, TeamRoles } from "@prisma/client";
 
-import { z } from "zod";
-import { route } from "@/lib/route";
 import { getCurrent, getMembershipOfTeam, getTeam, notify } from "./user-data";
-import { serverResponse } from "@/lib/response";
-import { userSelect } from "./config";
-import { revalidatePath } from "next/cache";
-import { notificationIcon } from "@/lib/utils";
 import { getServerSession } from "next-auth";
+import { revalidatePath } from "next/cache";
+import { userSelect } from "./config";
+import { notificationIcon } from "@/lib/utils";
+import { serverResponse } from "@/lib/response";
+import { route } from "@/lib/route";
 import { authOptions } from "@/services/auth";
+import { z } from "zod";
 
-export async function createTeam(ownerId: string, invitiations: User[], values: z.infer<typeof CreateTeamSchema>) {
-  const ownerIdN = parseInt(ownerId as string)
+export async function createTeam(ownerId: number, invitiations: User[], values: z.infer<typeof CreateTeamSchema>) {
   const newTeam = await db.team.create({
-    data: { name: values.name, about: values.about, ownerId: ownerIdN },
+    data: { name: values.name, about: values.about, ownerId: ownerId },
   })
-  const newMember = await db.teamMember.create({
-    data: { userId: ownerIdN, teamId: newTeam.id }
+  await db.teamMember.create({
+    data: { userId: ownerId, teamId: newTeam.id }
   })
   await notify(
     `<b>${newTeam.name}</b> team has been created!`,
     route.viewTeam(newTeam.id),
-    ownerIdN,
+    ownerId,
     notificationIcon('create-team')
   )
   if (invitiations.length > 0) {
     await notify(
       `<b>${newTeam.name}</b> team invitations has been sent to users - total invitations is ${invitiations.length} invitation`,
       route.viewTeamInvitations(newTeam.id),
-      ownerIdN,
+      ownerId,
       notificationIcon('invite-to-team')
     )
     invitiations.forEach(async (invitation) => {
@@ -55,11 +54,60 @@ export async function createTeam(ownerId: string, invitiations: User[], values: 
   }
 }
 
+export async function updateTeam(teamId: number, values: z.infer<typeof CreateTeamSchema>) {
+  const currentUser = await getServerSession(authOptions)
+  const userId = currentUser?.user.id
+  
+  const findMembership = await getMembershipOfTeam(userId as number, teamId)
+  const team = await getTeam(teamId)
+
+  if (!findMembership || userId != team?.ownerId) {
+    return {
+      status: 403,
+      message: 'Not Authorized',
+      findMembership,
+      team,
+      userId,
+      currentUser
+    }
+  }
+
+  await db.team.update({
+    data: { name: values.name, about: values.about },
+    where: { id: teamId },
+  })
+
+  return {
+    message: 'Team details has been updated',
+    status: 200,
+  }
+
+}
+
+export async function deleteTeam(teamId: number) {
+  const team = await db.team.findUnique({
+    where: { id: teamId },
+  })
+  const user = await getCurrent()
+
+  if (team?.ownerId !== user?.id) {
+    return {
+      message: 'Unauthorized',
+      status: 403
+    }
+  }
+
+  await db.team.delete({
+    where: { id: teamId }
+  })
+  return {
+    message: 'Team have been deleted!',
+    status: 200
+  }
+}
+
 export async function createTeamProject(ownerId: number, teamId: number, values: z.infer<typeof CreateProjectSchema>) {
 
-  const ownerIdN = parseInt(ownerId as any)
-  const teamIdN = parseInt(teamId as any)
- 
   const { name, description, url, github, notes } = values
 
   const newProject = await db.teamProject.create({
@@ -69,18 +117,18 @@ export async function createTeamProject(ownerId: number, teamId: number, values:
       notes,
       github,
       url,
-      ownerId: ownerIdN,
-      teamId: teamIdN,
+      ownerId,
+      teamId,
     }
   })
   await notify(
     `<b>${newProject.name}</b> - A project has been created to your list!`,
     route.viewTeamProject(newProject.teamId, newProject.id),
-    ownerIdN,
+    ownerId,
     notificationIcon('create-project')
   )
 
-  revalidatePath(route.viewTeamProjects(teamIdN))
+  revalidatePath(route.viewTeamProjects(teamId))
 
   return {
     status: 201,
@@ -184,16 +232,14 @@ export async function leaveOneTeam(membershipId: number) {
 
 export async function updateTeamProject(projectId: number, currentId: number, values: z.infer<typeof CreateProjectSchema>) {
 
-  const projectIdN = parseInt(projectId as any)
- 
-  const findProject = await db.teamProject.findUnique({ where: { id: projectIdN } })
+  const findProject = await db.teamProject.findUnique({ where: { id: projectId } })
 
   if (findProject?.ownerId == currentId) {
 
     const { name, description, url, github, notes } = values
 
     const updatedProject = await db.teamProject.update({
-      where: { id: projectIdN },
+      where: { id: projectId },
       data: {
         name,
         description,
@@ -592,57 +638,7 @@ export async function removeInvitation(invitationId: number) {
 
 }
 
-export async function updateTeam(teamId: number, values: z.infer<typeof CreateTeamSchema>) {
-  const currentUser = await getServerSession(authOptions)
-  const userId = currentUser?.user.id
-  
-  const findMembership = await getMembershipOfTeam(userId as number, teamId)
-  const team = await getTeam(teamId)
-
-  if (!findMembership || userId != team?.ownerId) {
-    return {
-      status: 403,
-      message: 'Not Authorized',
-      findMembership,
-      team,
-      userId,
-      currentUser
-    }
-  }
-
-  await db.team.update({
-    data: { name: values.name, about: values.about },
-    where: { id: teamId },
-  })
-
-  return {
-    message: 'Team details has been updated',
-    status: 200,
-  }
-
-}
-
-export async function deleteTeam(teamId: number) {
-  const team = await db.team.findUnique({
-    where: { id: teamId },
-  })
-  const user = await getCurrent()
-
-  if (team?.ownerId !== user?.id) {
-    return {
-      message: 'Unauthorized',
-      status: 403
-    }
-  }
-
-  await db.team.delete({
-    where: { id: teamId }
-  })
-  return {
-    message: 'Team have been deleted!',
-    status: 200
-  }
-}
+// Permissions section
 
 export async function getTeamPermissions(teamId: number) {
   const permissions = await db.teamPermission.findMany({
@@ -675,17 +671,12 @@ export async function getGlobalTeamPermissionsByTeam(teamId: number, tag: string
   return permissions
 }
 
-export async function updateTeamPermission(
-  permissionId: number,
-  teamId: number,
-  newMutators: TeamRoles[],
-  teamPermissions: TeamPermission[]
-) {
+export async function updateTeamPermission(permissionId: number, teamId: number, newMutators: TeamRoles[], teamPermissions: TeamPermission[]) {
 
   let items: any
 
   teamPermissions.forEach(async (item) => {
-    const deleteItem = await db.teamPermission.delete({
+    await db.teamPermission.delete({
       where: { id: item.id }
     })
   })

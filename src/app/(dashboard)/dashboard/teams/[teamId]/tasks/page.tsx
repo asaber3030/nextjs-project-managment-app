@@ -74,7 +74,7 @@ const TeamIDTasks = async ({ params, searchParams }: Props) => {
       {tasks.length === 0 && (<EmptyState title="No Tasks" />)}
 
       {/* Display Tasks */}
-      <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-2'>
+      <div className='grid grid-cols-1 md:grid-cols-3 xl:grid-cols-3 gap-2'>
         {tasks.map((task) => (
           <OneTask
             teamId={teamId}

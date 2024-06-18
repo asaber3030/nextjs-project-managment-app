@@ -37,7 +37,7 @@ export const AllProjectBoards = ({ project }: Props) => {
       )}
 
       {boards?.length > 0 && queryBoards.isFetched && (
-        <div className='grid lg:grid-cols-2 md:grid-cols-2 xl:grid-cols-3 grid-cols-1 gap-2'>
+        <div className='grid lg:grid-cols-3 md:grid-cols-2 xl:grid-cols-3 grid-cols-1 gap-2'>
           {boards?.map(board => (
             <OneBoard 
               board={board as any} 
