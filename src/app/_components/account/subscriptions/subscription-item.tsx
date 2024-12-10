@@ -48,23 +48,32 @@ export const SubscriptionItem = ({ subscription }: Props) => {
           
           <li className='flex items-center gap-10 py-1'>
             <span className='min-w-36'>Invoice Number</span>
-            {invoiceLoading ? (<OnlySpinner />) : (
-              <span className="text-blue-500 min-w-36 hover:underline hover:text-blue-800 cursor-pointer select-none flex items-center gap-2">#{invoice?.number ?? <OnlySpinner />}</span>
-            )}
+            {subscription.planId != 1 ? (
+              <React.Fragment>
+                {invoiceLoading ? (<OnlySpinner />) : (
+                  <span className="text-blue-500 min-w-36 hover:underline hover:text-blue-800 cursor-pointer select-none flex items-center gap-2">#{invoice?.number ?? <OnlySpinner />}</span>
+                )}
+              </React.Fragment>
+            ): <span>Not available for free plan.</span>}
           </li>
 
           <li className='flex items-center gap-10 py-1'>
             <span className='min-w-36'>Expires In</span>
-            <span className='min-w-36 flex items-center gap-2'>
-              {formatDate(subscription.createdAt, 'll')}
-              <span>-</span>
-              {subLoading ? <OnlySpinner /> : moment(Number(sub?.current_period_end) * 1000).format('ll')}
-            </span>
+
+            {subscription.planId !== 1 ? (
+              <span className='min-w-36 flex items-center gap-2'>
+                {formatDate(subscription.createdAt, 'll')}
+                <span>-</span>
+                {subLoading ? <OnlySpinner /> : moment(Number(sub?.current_period_end) * 1000).format('ll')}
+              </span>
+            ): <span>Not available for free plan.</span>}
           </li>
 
           <li className='flex items-center gap-10 py-1'>
             <span className='min-w-36'>Remaining Months</span> 
-            <span className='min-w-36'>{subLoading ? <OnlySpinner /> : diff.months()} months</span>
+            {subscription.planId !== 1 ? (
+              <span className='min-w-36'>{subLoading ? <OnlySpinner /> : diff.months()} months</span>
+            ): <span>Not available for free plan.</span>}
           </li>
 
           <li className='flex items-center gap-10 py-1'>
@@ -77,9 +86,11 @@ export const SubscriptionItem = ({ subscription }: Props) => {
 
           <SubscriptionMoneyLi subTotal={subscription.subTotal} total={subscription.total} />
 
-          <div className='flex xl:flex-row flex-col flex-wrap gap-2 justify-between xl:items-center border-t-0 border-none pb-0 mt-0'>
-
-            <SubscriptionInvoiceButtons url={invoice?.invoice_pdf!} />
+          <div className='flex xl:flex-row mt-4 flex-col flex-wrap gap-2 justify-between xl:items-center border-t-0 border-none pb-0'>
+            
+            {subscription.planId != 1 && (
+              <SubscriptionInvoiceButtons url={invoice?.invoice_pdf!} />
+            )}
 
             <CancelSubscriptionModal
               planId={subscription.planId}

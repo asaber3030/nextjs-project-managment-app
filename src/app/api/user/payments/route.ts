@@ -58,7 +58,6 @@ async function fulfillOrder(data: Stripe.LineItem[], eventObj: Stripe.Checkout.S
   }
 }
 
-
 const handleCompletedCheckoutSession = async (event: Stripe.CheckoutSessionCompletedEvent) => {
 
   try {

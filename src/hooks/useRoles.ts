@@ -1,10 +1,9 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query"
 
-import { QueryKeys } from "@/lib/query-keys";
-import { getAccess } from "@/actions/permission";
+import { QueryKeys } from "@/lib/query-keys"
+import { getAccess } from "@/actions/permission"
 
 export function useRole(tag: string, roleName: string, teamId: number) {
-
   const queryRole = useQuery({
     queryKey: QueryKeys.accessPermission(tag, roleName, teamId),
     queryFn: () => getAccess(tag, roleName, teamId),
@@ -20,7 +19,6 @@ export function useRole(tag: string, roleName: string, teamId: number) {
     roleFetching: queryRole.isFetching,
     roleRefetching: queryRole.isRefetching,
     refetchRole: queryRole.refetch,
-    queryRole
+    queryRole,
   }
-
 }

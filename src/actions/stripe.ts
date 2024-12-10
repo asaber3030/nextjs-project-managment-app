@@ -4,6 +4,7 @@ import { stripe } from "@/services/stripe";
 
 import db from "@/services/prisma";
 import moment from "moment";
+import { getCurrent } from "./user-data";
 
 export async function getInvoice(invoiceId: string) {
   const invoice = await stripe.invoices.retrieve(invoiceId)
@@ -33,6 +34,7 @@ export async function sendInvoice(invoiceId: string) {
 
 export async function cancelSubscription(stripeSubscriptionId: string, dbSubscriptionId: number) {
   const subscription = await stripe.subscriptions.retrieve(stripeSubscriptionId)
+  const user = await getCurrent()
 
   if (!subscription) return { message: 'No subscriptions found.' }
 
@@ -45,6 +47,25 @@ export async function cancelSubscription(stripeSubscriptionId: string, dbSubscri
     await db.subscription.update({
       where: { id: dbSubscriptionId },
       data: { status: 'canceled' }
+    })
+    await db.user.update({
+      where: { id: user?.id },
+      data: { planId: 1 }
+    })
+    await db.subscription.create({
+      data: {
+        userId: user?.id as number,
+        planId: 1,
+        subTotal: 0,
+        total: 0,
+        subscriptionId: '',
+        invoiceId: '',
+        status: 'complete',
+        currency: 'usd',
+        email: user?.email!,
+        customerId: '',
+        expiresAt: 0
+      }
     })
     return {
       message: 'Subscription has been cancelled succsessfully.'

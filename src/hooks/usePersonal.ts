@@ -1,21 +1,36 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useRouter } from "next/navigation"
 
-import { z } from "zod";
-import { changeStatusPersonalTask, createPersonalProject, createPersonalTask, deletePersonalProject, deletePersonalTask, getPersonalProject, getPersonalProjects, getPersonalTask, getPersonalTasks, updatePersonalProject, updatePersonalTask } from "@/actions/user-data";
-import { route } from "@/lib/route";
-import { toast } from "sonner";
+import { z } from "zod"
+import {
+  changeStatusPersonalTask,
+  createPersonalProject,
+  createPersonalTask,
+  deletePersonalProject,
+  deletePersonalTask,
+  getPersonalProject,
+  getPersonalProjects,
+  getPersonalTask,
+  getPersonalTasks,
+  updatePersonalProject,
+  updatePersonalTask,
+} from "@/actions/user-data"
+import { route } from "@/lib/route"
+import { toast } from "sonner"
 
-import { PersonalProjectSchema, PersonalTaskSchema } from "@/schema";
-import { QueryKeys } from "@/lib/query-keys";
-import { PersonalTaskStatus, Status } from "@prisma/client";
+import { PersonalProjectSchema, PersonalTaskSchema } from "@/schema"
+import { QueryKeys } from "@/lib/query-keys"
+import { PersonalTaskStatus } from "@prisma/client"
 
-export function usePersonalProjects(query: string = '', orderBy: string = 'id', orderType: ('asc' | 'desc') = 'desc') {
-
+export function usePersonalProjects(
+  query: string = "",
+  orderBy: string = "id",
+  orderType: "asc" | "desc" = "desc"
+) {
   const queryPersonalProjects = useQuery({
     queryKey: QueryKeys.personalProjects(),
     queryFn: () => getPersonalProjects(query, orderBy, orderType),
-    gcTime: 10
+    gcTime: 10,
   })
 
   return {
@@ -23,31 +38,31 @@ export function usePersonalProjects(query: string = '', orderBy: string = 'id', 
     projectsLoading: queryPersonalProjects.isLoading,
     projectsFetched: queryPersonalProjects.isFetched,
     projectsRefetching: queryPersonalProjects.isRefetching,
-    projectsRefetch: queryPersonalProjects.refetch
+    projectsRefetch: queryPersonalProjects.refetch,
   }
 }
 
 export function usePersonalProject(projectId?: number) {
-
   const router = useRouter()
   const queryClient = useQueryClient()
 
   const queryPersonalProject = useQuery({
     queryKey: QueryKeys.personalProject(projectId as number),
-    queryFn: () => getPersonalProject(projectId as number)
+    queryFn: () => getPersonalProject(projectId as number),
   })
 
   type PersonalProjectData = z.infer<typeof PersonalProjectSchema>
 
   const updateMutation = useMutation({
-    mutationFn: ({ projectId, data }: { data: PersonalProjectData, projectId: number }) => updatePersonalProject(projectId, data),
+    mutationFn: ({ projectId, data }: { data: PersonalProjectData; projectId: number }) =>
+      updatePersonalProject(projectId, data),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: QueryKeys.personalProjects() })
       toast.message(data.message)
       if (data.status === 200) {
         router.push(route.personalProjects())
       }
-    }
+    },
   })
   const deleteMutation = useMutation({
     mutationFn: ({ projectId }: { projectId: number }) => deletePersonalProject(projectId),
@@ -57,7 +72,7 @@ export function usePersonalProject(projectId?: number) {
       if (data.status === 200) {
         router.push(route.personalProjects())
       }
-    }
+    },
   })
   const createMutation = useMutation({
     mutationFn: ({ data }: { data: PersonalProjectData }) => createPersonalProject(data),
@@ -67,7 +82,7 @@ export function usePersonalProject(projectId?: number) {
       if (data.status === 201) {
         router.push(route.personalProjects())
       }
-    }
+    },
   })
 
   const { mutate: updateMutate, isPending: updatePending } = updateMutation
@@ -92,11 +107,14 @@ export function usePersonalProject(projectId?: number) {
   }
 }
 
-export function usePersonalTasks(query: string = '', orderBy: string = 'id', orderType: ('asc' | 'desc') = 'desc') {
-
+export function usePersonalTasks(
+  query: string = "",
+  orderBy: string = "id",
+  orderType: "asc" | "desc" = "desc"
+) {
   const queryPersonalTasks = useQuery({
     queryKey: QueryKeys.personalTasks(),
-    queryFn: () => getPersonalTasks(query, orderBy, orderType)
+    queryFn: () => getPersonalTasks(query, orderBy, orderType),
   })
 
   return {
@@ -104,49 +122,50 @@ export function usePersonalTasks(query: string = '', orderBy: string = 'id', ord
     tasksLoading: queryPersonalTasks.isLoading,
     tasksFetched: queryPersonalTasks.isFetched,
     tasksRefetching: queryPersonalTasks.isRefetching,
-    tasksRefetch: queryPersonalTasks.refetch
+    tasksRefetch: queryPersonalTasks.refetch,
   }
 }
 
 export function usePersonalTask(taskId?: number) {
-
   const router = useRouter()
   const queryClient = useQueryClient()
 
   const queryPersonalTask = useQuery({
     queryKey: QueryKeys.personalTask(taskId as number),
-    queryFn: () => getPersonalTask(taskId as number)
+    queryFn: () => getPersonalTask(taskId as number),
   })
 
   type PersonalTaskData = z.infer<typeof PersonalTaskSchema>
 
   const updateMutation = useMutation({
-    mutationFn: ({ taskId, data }: { data: PersonalTaskData, taskId: number }) => updatePersonalTask(taskId, data),
+    mutationFn: ({ taskId, data }: { data: PersonalTaskData; taskId: number }) =>
+      updatePersonalTask(taskId, data),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: QueryKeys.personalProjects() })
       toast.message(data.message)
-    }
+    },
   })
   const changeStatusMutation = useMutation({
-    mutationFn: ({ taskId, status }: { status: PersonalTaskStatus, taskId: number }) => changeStatusPersonalTask(taskId, status) ,
+    mutationFn: ({ taskId, status }: { status: PersonalTaskStatus; taskId: number }) =>
+      changeStatusPersonalTask(taskId, status),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: QueryKeys.personalProjects() })
       toast.message(data.message)
-    }
+    },
   })
   const deleteMutation = useMutation({
     mutationFn: ({ taskId }: { taskId: number }) => deletePersonalTask(taskId),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: QueryKeys.personalProjects() })
       toast.message(data.message)
-    }
+    },
   })
   const createMutation = useMutation({
     mutationFn: ({ data }: { data: PersonalTaskData }) => createPersonalTask(data),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: QueryKeys.personalProjects() })
       toast.message(data.message)
-    }
+    },
   })
 
   const { mutate: updateMutate, isPending: updatePending } = updateMutation

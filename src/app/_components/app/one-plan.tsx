@@ -1,11 +1,11 @@
-import { Plan } from "@/types";
+import { Plan } from "@/types"
 
-import { virtualInfinityNumber } from "@/lib/constants";
-import { cn, formatNumber } from "@/lib/utils";
+import { virtualInfinityNumber } from "@/lib/constants"
+import { cn, formatNumber } from "@/lib/utils"
 
-import { Button } from "@/components/ui/button";
-import { CheckCircle2, XCircle } from "lucide-react";
-import { ClassValue } from "clsx";
+import { Button } from "@/components/ui/button"
+import { CheckCircle2, XCircle } from "lucide-react"
+import { ClassValue } from "clsx"
 
 type Props = {
   plan: Plan
@@ -15,11 +15,17 @@ type Props = {
 }
 
 export const OnePlan = ({ plan, idx, showButtons = true, className }: Props) => {
-
-  return ( 
-    <div key={`plan-idx-view-${plan.id}`} className={cn(className && className, "border-2 p-4 h-fit rounded-xl shadow-sm space-y-4", idx === 1 && "xl:scale-105 bg-main text-white")}>
+  return (
+    <div
+      key={`plan-idx-view-${plan.id}`}
+      className={cn(
+        className && className,
+        "border bg-white p-4 h-fit rounded-xl shadow-sm space-y-4",
+        idx === 1 && "xl:scale-105 bg-main text-white"
+      )}
+    >
       <h3 className="text-center text-3xl font-extrabold">{plan.name}</h3>
-      
+
       <p className="flex gap-1 justify-center items-center">
         <span className="text-lg text-green-700 font-extrabold">$</span>
         <span className="text-green-700 text-6xl font-extrabold">{formatNumber(plan.price)}</span>
@@ -28,89 +34,169 @@ export const OnePlan = ({ plan, idx, showButtons = true, className }: Props) => 
 
       {showButtons && (
         <div className="flex gap-1 justify-center">
-          <Button variant="secondaryMain">Get Early Access</Button>
-          <a href={plan.paymentLink}><Button variant="outline" className={cn(idx === 1 && "text-black")}>Subscribe</Button></a>
+          <a href={plan.paymentLink}>
+            <Button variant="secondaryMain" className={cn(idx === 1 && "text-black")}>
+              Subscribe
+            </Button>
+          </a>
         </div>
       )}
 
       <ul className="px-4 space-y-4">
         <li className="flex gap-3 items-center">
-          <span className="text-secondaryMain"><CheckCircle2 className="size-5" /></span>
-          <span><b>{plan.numberOfTeams === virtualInfinityNumber ? "∞" : plan.numberOfTeams}</b> Teams</span>
+          <span className="text-secondaryMain">
+            <CheckCircle2 className="size-5" />
+          </span>
+          <span>
+            <b>{plan.numberOfTeams === virtualInfinityNumber ? "∞" : plan.numberOfTeams}</b> Teams
+          </span>
         </li>
 
         <li className="flex gap-3 items-center">
-          <span className="text-secondaryMain"><CheckCircle2 className="size-5" /></span>
-          <span><b>{plan.numberOfPersonalProjects === virtualInfinityNumber ? "∞" : plan.numberOfPersonalProjects}</b> Personal Projects</span>
+          <span className="text-secondaryMain">
+            <CheckCircle2 className="size-5" />
+          </span>
+          <span>
+            <b>
+              {plan.numberOfPersonalProjects === virtualInfinityNumber
+                ? "∞"
+                : plan.numberOfPersonalProjects}
+            </b>{" "}
+            Personal Projects
+          </span>
         </li>
 
         <li className="flex gap-3 items-center">
-          <span className="text-secondaryMain"><CheckCircle2 className="size-5" /></span>
-          <span><b>{plan.numberOfPersonalTasks === virtualInfinityNumber ? "∞" : plan.numberOfPersonalTasks}</b> Personal Tasks</span>
+          <span className="text-secondaryMain">
+            <CheckCircle2 className="size-5" />
+          </span>
+          <span>
+            <b>
+              {plan.numberOfPersonalTasks === virtualInfinityNumber
+                ? "∞"
+                : plan.numberOfPersonalTasks}
+            </b>{" "}
+            Personal Tasks
+          </span>
         </li>
 
         <li className="flex gap-3 items-center">
-          <span className="text-secondaryMain"><CheckCircle2 className="size-5" /></span>
-          <span><b>{plan.numberOfPersonalBoards === virtualInfinityNumber ? "∞" : plan.numberOfPersonalBoards}</b> Personal Boards</span>
+          <span className="text-secondaryMain">
+            <CheckCircle2 className="size-5" />
+          </span>
+          <span>
+            <b>
+              {plan.numberOfPersonalBoards === virtualInfinityNumber
+                ? "∞"
+                : plan.numberOfPersonalBoards}
+            </b>{" "}
+            Personal Boards
+          </span>
         </li>
-        
+
         <li className="flex gap-3 items-center">
-          <span className="text-secondaryMain"><CheckCircle2 className="size-5" /></span>
-          <span><b>{plan.numberOfProjectTeams === virtualInfinityNumber ? "∞" : plan.numberOfProjectTeams}</b> Team projects / per team</span>
+          <span className="text-secondaryMain">
+            <CheckCircle2 className="size-5" />
+          </span>
+          <span>
+            <b>
+              {plan.numberOfProjectTeams === virtualInfinityNumber
+                ? "∞"
+                : plan.numberOfProjectTeams}
+            </b>{" "}
+            Team projects / per team
+          </span>
         </li>
         <li className="flex gap-3 items-center">
-          <span className="text-secondaryMain"><CheckCircle2 className="size-5" /></span>
-          <span><b>{plan.numberOfTasks === virtualInfinityNumber ? "∞" : plan.numberOfTasks}</b> Tasks / per project</span>
+          <span className="text-secondaryMain">
+            <CheckCircle2 className="size-5" />
+          </span>
+          <span>
+            <b>{plan.numberOfTasks === virtualInfinityNumber ? "∞" : plan.numberOfTasks}</b> Tasks /
+            per project
+          </span>
         </li>
         <li className="flex gap-3 items-center">
-          <span className="text-secondaryMain"><CheckCircle2 className="size-5" /></span>
-          <span><b>{plan.numberOfBoards === virtualInfinityNumber ? "∞" : plan.numberOfBoards}</b> Boards / per project</span>
+          <span className="text-secondaryMain">
+            <CheckCircle2 className="size-5" />
+          </span>
+          <span>
+            <b>{plan.numberOfBoards === virtualInfinityNumber ? "∞" : plan.numberOfBoards}</b>{" "}
+            Boards / per project
+          </span>
         </li>
         <li className="flex gap-3 items-center">
-          <span className="text-secondaryMain"><CheckCircle2 className="size-5" /></span>
-          <span><b>{plan.numberOfTeamMembers === virtualInfinityNumber ? "∞" : plan.numberOfTeamMembers}</b> Team Members / per team</span>
+          <span className="text-secondaryMain">
+            <CheckCircle2 className="size-5" />
+          </span>
+          <span>
+            <b>
+              {plan.numberOfTeamMembers === virtualInfinityNumber ? "∞" : plan.numberOfTeamMembers}
+            </b>{" "}
+            Team Members / per team
+          </span>
         </li>
 
         <li className="flex gap-3 items-center">
           {plan.hasAnalytics ? (
-            <span className="text-secondaryMain"><CheckCircle2 className="size-5" /></span>
-          ): (
-            <span className="text-gray-300"><XCircle className="size-5" /></span>
+            <span className="text-secondaryMain">
+              <CheckCircle2 className="size-5" />
+            </span>
+          ) : (
+            <span className="text-gray-300">
+              <XCircle className="size-5" />
+            </span>
           )}
-          <span><b>{plan.hasAnalytics ? "Yes" : "No"}</b> analytics</span>
+          <span>
+            <b>{plan.hasAnalytics ? "Yes" : "No"}</b> analytics
+          </span>
         </li>
 
         <li className="flex gap-3 items-center">
           {plan.hasCharts ? (
-            <span className="text-secondaryMain"><CheckCircle2 className="size-5" /></span>
-          ): (
-            <span className="text-gray-300"><XCircle className="size-5" /></span>
+            <span className="text-secondaryMain">
+              <CheckCircle2 className="size-5" />
+            </span>
+          ) : (
+            <span className="text-gray-300">
+              <XCircle className="size-5" />
+            </span>
           )}
-          <span><b>{plan.hasCharts ? "Yes, Charts for virtulization" : "No Charts"}</b></span>
+          <span>
+            <b>{plan.hasCharts ? "Yes, Charts for virtulization" : "No Charts"}</b>
+          </span>
         </li>
 
         <li className="flex gap-3 items-center">
           {plan.hasMailSystem ? (
-            <span className="text-secondaryMain"><CheckCircle2 className="size-5" /></span>
-          ): (
-            <span className="text-gray-300"><XCircle className="size-5" /></span>
+            <span className="text-secondaryMain">
+              <CheckCircle2 className="size-5" />
+            </span>
+          ) : (
+            <span className="text-gray-300">
+              <XCircle className="size-5" />
+            </span>
           )}
-          <span><b>{plan.hasMailSystem ? "Yes there is mail system" : "No mail system"}</b></span>
+          <span>
+            <b>{plan.hasMailSystem ? "Yes there is mail system" : "No mail system"}</b>
+          </span>
         </li>
 
         {plan.features?.map((feature) => (
           <li className="flex gap-3 items-center" key={`feature-idx-${feature.id}`}>
             {feature.available ? (
-              <span className="text-secondaryMain"><CheckCircle2 className="size-5" /></span>
-            ): (
-              <span className="text-gray-300"><XCircle className="size-5" /></span>
+              <span className="text-secondaryMain">
+                <CheckCircle2 className="size-5" />
+              </span>
+            ) : (
+              <span className="text-gray-300">
+                <XCircle className="size-5" />
+              </span>
             )}
             <span>{feature.title}</span>
           </li>
         ))}
-
       </ul>
-
     </div>
-  );
+  )
 }

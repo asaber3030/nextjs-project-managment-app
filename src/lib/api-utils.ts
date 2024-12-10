@@ -1,17 +1,20 @@
-import jwt from 'jsonwebtoken'
+import jwt from "jsonwebtoken"
 
-import { NextRequest, NextResponse } from "next/server";
-import { User } from "@/types";
+import { NextRequest, NextResponse } from "next/server"
+import { User } from "@/types"
 
 export function response<T>(message: T, statusCode: number, data?: any, errors?: any) {
-  return NextResponse.json({
-    message,
-    status: statusCode,
-    data,
-    errors
-  }, { 
-    status: statusCode 
-  })
+  return NextResponse.json(
+    {
+      message,
+      status: statusCode,
+      data,
+      errors,
+    },
+    {
+      status: statusCode,
+    }
+  )
 }
 
 export function verifyJWT(request: NextRequest) {
@@ -21,7 +24,7 @@ export function verifyJWT(request: NextRequest) {
     if (verify) {
       return true
     } else {
-      return response('Unauthorized___action', 403)
+      return response("Unauthorized___action", 403)
     }
   } catch (err) {
     return false
@@ -29,8 +32,8 @@ export function verifyJWT(request: NextRequest) {
 }
 
 export function extractToken(request: NextRequest) {
-  const authHeader = request.headers.get('Authorization')
-  const token = authHeader?.split('Bearer ')[1]
+  const authHeader = request.headers.get("Authorization")
+  const token = authHeader?.split("Bearer ")[1]
   return token
 }
 
@@ -49,7 +52,7 @@ export function extractUser(request: NextRequest) {
 }
 
 export function createPagination(page: number | null, take: number = 1) {
-  let skip = 0;
+  let skip = 0
   if (page) {
     skip = page * take
   }

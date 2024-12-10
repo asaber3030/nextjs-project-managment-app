@@ -17,7 +17,6 @@ export const PersonalProjectActions = ({ project }: Props) => {
 
   return ( 
     <div className='flex gap-1 mt-4'>
-      <Link href={route.viewPersonalProject(project.id)}><Button variant='outline'><Eye className='text-gray-500 size-4' /></Button></Link>
       <Link href={route.updatePersonalProject(project.id)}><Button variant='outline'><Edit2 className='text-gray-500 size-4' /></Button></Link>
       <Link href={route.deletePersonalProject(project.id)}><Button variant='outline'><Trash className='text-gray-500 size-4' /></Button></Link>
     </div>

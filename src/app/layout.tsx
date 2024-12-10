@@ -1,33 +1,32 @@
-import { ReactQueryClientProvider } from '@/providers/react-query'
-import './globals.css'
+import { ReactQueryClientProvider } from "@/providers/react-query"
+import "./globals.css"
 
-import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import type { Metadata } from "next"
+import { User } from "@/types"
+import { Inter } from "next/font/google"
 
-import { cn } from '@/lib/utils'
-import { authOptions } from '@/services/auth'
-import { getServerSession } from 'next-auth'
-import { getNotifications } from '@/actions/user-data'
+import { cn } from "@/lib/utils"
+import { authOptions } from "@/services/auth"
+import { getServerSession } from "next-auth"
+import { getNotifications } from "@/actions/user-data"
+import { getPlans } from "@/actions/app"
 
 import { Toaster } from "@/components/ui/sonner"
-import { Navbar } from './_components/app/navbar/navbar'
+import { Navbar } from "./_components/app/navbar/navbar"
 
-import { NextAuthProvider } from '@/providers/next-auth'
-import { UserDataProvider } from '@/providers/user-data-provider'
-import { NotificationsProvider } from '@/providers/notifications'
-import { User } from '@/types'
-import { getPlans } from '@/actions/app'
-import { PlansProvider } from '@/providers/plans'
+import { PlansProvider } from "@/providers/plans"
+import { NextAuthProvider } from "@/providers/next-auth"
+import { UserDataProvider } from "@/providers/user-data-provider"
+import { NotificationsProvider } from "@/providers/notifications"
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: 'Platform',
-  description: 'Platform is created to help teams share informations, add tasks asto team members.',
+  title: "Platform",
+  description: "Platform is created to help teams share informations, add tasks asto team members.",
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-
   const session = await getServerSession(authOptions)
   const user = session?.user as unknown as User
 
@@ -37,7 +36,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <ReactQueryClientProvider>
       <html lang="en" suppressHydrationWarning={true}>
-        <body className={cn(inter.className, 'bg-gray-50')}>
+        <body className={cn(inter.className, "bg-gray-50")}>
           <Toaster />
           <NextAuthProvider>
             <PlansProvider value={plans}>
